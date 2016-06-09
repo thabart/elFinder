@@ -41,7 +41,7 @@ elFinder.prototype._options = {
 	 *      // upload ...
 	 *      return dfrd;
 	 *    }
-	 *    
+	 *
 	 *  }
 	 **/
 	transport : {},
@@ -62,15 +62,15 @@ elFinder.prototype._options = {
 	 * @default  'auto'
 	 */
 	dragUploadAllow : 'auto',
-	
+
 	/**
 	 * Max size of chunked data of file upload
-	 * 
+	 *
 	 * @type Number
 	 * @default  10485760(10MB)
 	 */
 	uploadMaxChunkSize : 10485760,
-	
+
 	/**
 	 * Timeout for upload using iframe
 	 *
@@ -78,7 +78,7 @@ elFinder.prototype._options = {
 	 * @default  0 - no timeout
 	 */
 	iframeTimeout : 0,
-	
+
 	/**
 	 * Data to append to all requests and to upload files
 	 *
@@ -86,7 +86,7 @@ elFinder.prototype._options = {
 	 * @default  {}
 	 */
 	customData : {},
-	
+
 	/**
 	 * Event listeners to bind on elFinder init
 	 *
@@ -133,12 +133,12 @@ elFinder.prototype._options = {
 	 * @type Array
 	 */
 	commands : [
-		'open', 'opendir', 'reload', 'home', 'up', 'back', 'forward', 'getfile', 'quicklook', 
-		'download', 'rm', 'duplicate', 'rename', 'mkdir', 'mkfile', 'upload', 'copy', 
+		'open', 'opendir', 'reload', 'home', 'up', 'back', 'forward', 'getfile', 'quicklook',
+		'download', 'rm', 'duplicate', 'rename', 'mkdir', 'mkfile', 'upload', 'copy',
 		'cut', 'paste', 'edit', 'extract', 'archive', 'search', 'info', 'view', 'help',
-		'resize', 'sort', 'netmount', 'netunmount', 'places', 'chmod'
+		'resize', 'sort', 'netmount', 'netunmount', 'places', 'chmod', 'permissions'
 	],
-	
+
 	/**
 	 * Commands options.
 	 *
@@ -204,7 +204,7 @@ elFinder.prototype._options = {
 				// 	 * files mimetypes allowed to edit in current wysisyg
 				// 	 * @type  Array
 				// 	 */
-				// 	mimes : ['text/html'], 
+				// 	mimes : ['text/html'],
 				// 	/**
 				// 	 * Called when "edit" dialog loaded.
 				// 	 * Place to init wysisyg.
@@ -241,7 +241,7 @@ elFinder.prototype._options = {
 				// 	 * @return void
 				// 	 */
 				// 	focus : function(textarea, instance) {}
-				// 
+				//
 				// }
 			]
 		},
@@ -256,37 +256,37 @@ elFinder.prototype._options = {
 				// 	/**
 				// 	 * Lable (require)
 				// 	 * It is filtered by the `fm.i18n()`
-				// 	 * 
+				// 	 *
 				// 	 * @type String
 				// 	 */
 				// 	label : 'Description',
-				// 	
+				//
 				// 	/**
 				// 	 * Template (require)
 				// 	 * `{id}` is replaced in dialog.id
-				// 	 * 
+				// 	 *
 				// 	 * @type String
 				// 	 */
 				// 	tpl : '<div class="elfinder-info-desc"><span class="elfinder-info-spinner"></span></div>',
-				// 	
+				//
 				// 	/**
 				// 	 * Restricts to mimetypes (optional)
 				// 	 * Exact match or category match
-				// 	 * 
+				// 	 *
 				// 	 * @type Array
 				// 	 */
 				// 	mimes : ['text', 'image/jpeg', 'directory'],
-				// 	
+				//
 				// 	/**
 				// 	 * Restricts to file.hash (optional)
-				// 	 * 
+				// 	 *
 				// 	 * @ type Regex
 				// 	 */
 				// 	hashRegex : /^l\d+_/,
-				// 
+				//
 				// 	/**
 				// 	 * Request that asks for the description and sets the field (optional)
-				// 	 * 
+				// 	 *
 				// 	 * @type Function
 				// 	 */
 				// 	action : function(file, fm, dialog) {
@@ -339,7 +339,7 @@ elFinder.prototype._options = {
 							self.inputs.host.find('span').removeClass("elfinder-info-spinner");
 							self.inputs.host.find('span').html(data.body.replace(/\{msg:([^}]+)\}/g, function(whole,s1){return fm.i18n(s1,'Dropbox.com');}));
 						}).fail(function(){});
-					}					
+					}
 				},
 				done: function(fm, data){
 					var self = this;
@@ -432,7 +432,7 @@ elFinder.prototype._options = {
 
 		help : {view : ['about', 'shortcuts', 'help', 'debug']}
 	},
-	
+
 	/**
 	 * Callback for "getfile" commands.
 	 * Required to use elFinder with WYSIWYG editors etc..
@@ -441,7 +441,7 @@ elFinder.prototype._options = {
 	 * @default null (command not active)
 	 */
 	getFileCallback : null,
-	
+
 	/**
 	 * Default directory view. icons/list
 	 *
@@ -449,15 +449,15 @@ elFinder.prototype._options = {
 	 * @default "icons"
 	 */
 	defaultView : 'icons',
-	
+
 	/**
 	 * Hash of default directory path to open
-	 * 
+	 *
 	 * @type String
 	 * @default ""
 	 */
 	startPathHash : '',
-	
+
 	/**
 	 * UI plugins to load.
 	 * Current dir ui and dialogs loads always.
@@ -468,7 +468,7 @@ elFinder.prototype._options = {
 	 * @full ['toolbar', 'places', 'tree', 'path', 'stat']
 	 */
 	ui : ['toolbar', 'tree', 'path', 'stat'],
-	
+
 	/**
 	 * Some UI plugins options.
 	 * @type Object
@@ -510,7 +510,7 @@ elFinder.prototype._options = {
 			//  * Add CSS class name to navbar directories (optional)
 			//  * see: https://github.com/Studio-42/elFinder/pull/1061,
 			//  *      https://github.com/Studio-42/elFinder/issues/1231
-			//  * 
+			//  *
 			//  * @type Function
 			//  */
 			// getClass: function(dir) {
@@ -528,10 +528,10 @@ elFinder.prototype._options = {
 		cwd : {
 			// display parent folder with ".." name :)
 			oldSchool : false,
-			
+
 			// fm.UA types array to show item select checkboxes e.g. ['All'] or ['Mobile'] etc. default: ['Touch']
 			showSelectCheckboxUA : ['Touch'],
-			
+
 			// file info columns displayed
 			listView : {
 				// name is always displayed, cols are ordered
@@ -554,7 +554,7 @@ elFinder.prototype._options = {
 			//  * Add CSS class name to cwd directories (optional)
 			//  * see: https://github.com/Studio-42/elFinder/pull/1061,
 			//  *      https://github.com/Studio-42/elFinder/issues/1231
-			//  * 
+			//  *
 			//  * @type Function
 			//  */
 			// getClass: function(file) {
@@ -593,7 +593,7 @@ elFinder.prototype._options = {
 	 * @type {String}
 	 */
 	sortType : 'name',
-	
+
 	/**
 	 * Default sort order.
 	 *
@@ -601,7 +601,7 @@ elFinder.prototype._options = {
 	 * @default "asc"
 	 */
 	sortOrder : 'asc',
-	
+
 	/**
 	 * Display folders first?
 	 *
@@ -609,15 +609,15 @@ elFinder.prototype._options = {
 	 * @default true
 	 */
 	sortStickFolders : true,
-	
+
 	/**
-	 * If true - elFinder will formating dates itself, 
+	 * If true - elFinder will formating dates itself,
 	 * otherwise - backend date will be used.
 	 *
 	 * @type Boolean
 	 */
 	clientFormatDate : true,
-	
+
 	/**
 	 * Show UTC dates.
 	 * Required set clientFormatDate to true
@@ -625,7 +625,7 @@ elFinder.prototype._options = {
 	 * @type Boolean
 	 */
 	UTCDate : false,
-	
+
 	/**
 	 * File modification datetime format.
 	 * Value from selected language data  is used by default.
@@ -635,7 +635,7 @@ elFinder.prototype._options = {
 	 * @default  ""
 	 */
 	dateFormat : '',
-	
+
 	/**
 	 * File modification datetime format in form "Yesterday 12:23:01".
 	 * Value from selected language data is used by default.
@@ -647,16 +647,16 @@ elFinder.prototype._options = {
 	 * @example "$1 H:m:i"
 	 */
 	fancyDateFormat : '',
-	
+
 	/**
 	 * Style of file mode at cwd-list, info dialog
 	 * 'string' (ex. rwxr-xr-x) or 'octal' (ex. 755) or 'both' (ex. rwxr-xr-x (755))
-	 * 
+	 *
 	 * @type {String}
 	 * @default 'both'
 	 */
 	fileModeStyle : 'both',
-	
+
 	/**
 	 * elFinder width
 	 *
@@ -664,7 +664,7 @@ elFinder.prototype._options = {
 	 * @default  "auto"
 	 */
 	width : 'auto',
-	
+
 	/**
 	 * elFinder height
 	 *
@@ -672,7 +672,7 @@ elFinder.prototype._options = {
 	 * @default  "auto"
 	 */
 	height : 400,
-	
+
 	/**
 	 * Make elFinder resizable if jquery ui resizable available
 	 *
@@ -680,7 +680,7 @@ elFinder.prototype._options = {
 	 * @default  true
 	 */
 	resizable : true,
-	
+
 	/**
 	 * Timeout before open notifications dialogs
 	 *
@@ -688,7 +688,7 @@ elFinder.prototype._options = {
 	 * @default  500 (.5 sec)
 	 */
 	notifyDelay : 500,
-	
+
 	/**
 	 * Position CSS, Width of notifications dialogs
 	 *
@@ -697,7 +697,7 @@ elFinder.prototype._options = {
 	 * position: CSS object | null (null: position center & middle)
 	 */
 	notifyDialog : {position: {top : '12px', right : '12px'}, width : 280},
-	
+
 	/**
 	 * Allow shortcuts
 	 *
@@ -705,7 +705,7 @@ elFinder.prototype._options = {
 	 * @default  true
 	 */
 	allowShortcuts : true,
-	
+
 	/**
 	 * Remeber last opened dir to open it after reload or in next session
 	 *
@@ -713,16 +713,16 @@ elFinder.prototype._options = {
 	 * @default  true
 	 */
 	rememberLastDir : true,
-	
+
 	/**
 	 * Clear historys(elFinder) on reload(not browser) function
 	 * Historys was cleared on Reload function on elFinder 2.0 (value is true)
-	 * 
+	 *
 	 * @type Boolean
 	 * @default  false
 	 */
 	reloadClearHistory : false,
-	
+
 	/**
 	 * Use browser native history with supported browsers
 	 *
@@ -730,7 +730,7 @@ elFinder.prototype._options = {
 	 * @default  true
 	 */
 	useBrowserHistory : true,
-	
+
 	/**
 	 * Lazy load config.
 	 * How many files display at once?
@@ -739,7 +739,7 @@ elFinder.prototype._options = {
 	 * @default  50
 	 */
 	showFiles : 50,
-	
+
 	/**
 	 * Lazy load config.
 	 * Distance in px to cwd bottom edge to start display files
@@ -748,7 +748,7 @@ elFinder.prototype._options = {
 	 * @default  50
 	 */
 	showThreshold : 50,
-	
+
 	/**
 	 * Additional rule to valid new file name.
 	 * By default not allowed empty names or '..'
@@ -761,7 +761,7 @@ elFinder.prototype._options = {
 	 *  validName : /^[^\s]+$/,
 	 */
 	validName : false,
-	
+
 	/**
 	 * Backup name suffix.
 	 *
@@ -769,7 +769,7 @@ elFinder.prototype._options = {
 	 * @default  "~"
 	 */
 	backupSuffix : '~',
-	
+
 	/**
 	 * Sync content interval
 	 *
@@ -777,7 +777,7 @@ elFinder.prototype._options = {
 	 * @default  0 (do not sync)
 	 */
 	sync : 0,
-	
+
 	/**
 	 * Sync start on load if sync value >= 1000
 	 *
@@ -785,7 +785,7 @@ elFinder.prototype._options = {
 	 * @default  true
 	 */
 	syncStart : true,
-	
+
 	/**
 	 * How many thumbnails create in one request
 	 *
@@ -793,7 +793,7 @@ elFinder.prototype._options = {
 	 * @default  5
 	 */
 	loadTmbs : 5,
-	
+
 	/**
 	 * Cookie option for browsersdoes not suppot localStorage
 	 *
@@ -805,7 +805,7 @@ elFinder.prototype._options = {
 		path    : '/',
 		secure  : false
 	},
-	
+
 	/**
 	 * Contextmenu config
 	 *
@@ -823,7 +823,7 @@ elFinder.prototype._options = {
 	/**
 	 * elFinder node enable always
 	 * This value will set to `true` if <body> has elFinder node only
-	 * 
+	 *
 	 * @type     Bool
 	 * @default  false
 	 */
@@ -833,7 +833,7 @@ elFinder.prototype._options = {
 	 * Show window close confirm dialog
 	 * Value is which state to show
 	 * 'hasNotifyDialog', 'editingFile', 'hasSelectedItem' and 'hasClipboardData'
-	 * 
+	 *
 	 * @type     Array
 	 * @default  ['hasNotifyDialog', 'editingFile']
 	 */

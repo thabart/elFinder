@@ -2,8 +2,8 @@
 /*               TOOLBAR STYLES              */
 /*********************************************/
 /* toolbar container */
-.elfinder-toolbar { 
-	padding:4px 0 3px 0; 
+.elfinder-toolbar {
+	padding:4px 0 3px 0;
 	border-left:0 solid transparent;
 	border-top:0 solid transparent;
 	border-right:0 solid transparent;
@@ -44,20 +44,20 @@
 .elfinder .ui-icon-search { cursor:pointer;}
 
 .elfinder-button:first-child {
-	-moz-border-radius-topleft: 4px; 
-	-webkit-border-top-left-radius: 4px; 
+	-moz-border-radius-topleft: 4px;
+	-webkit-border-top-left-radius: 4px;
 	border-top-left-radius: 4px;
-	-moz-border-radius-bottomleft: 4px; 
-	-webkit-border-bottom-left-radius: 4px; 
+	-moz-border-radius-bottomleft: 4px;
+	-webkit-border-bottom-left-radius: 4px;
 	border-bottom-left-radius: 4px;
 }
 
 .elfinder-button:last-child {
-	-moz-border-radius-topright: 4px; 
-	-webkit-border-top-right-radius: 4px; 
+	-moz-border-radius-topright: 4px;
+	-webkit-border-top-right-radius: 4px;
 	border-top-right-radius: 4px;
-	-moz-border-radius-bottomright: 4px; 
-	-webkit-border-bottom-right-radius: 4px; 
+	-moz-border-radius-bottomright: 4px;
+	-webkit-border-bottom-right-radius: 4px;
 	border-bottom-right-radius: 4px;
 }
 
@@ -104,7 +104,7 @@
 .elfinder-button-icon-up        { background-position: 0 -144px; }
 .elfinder-button-icon-opendir   { background-position: 0  -32px; }
 .elfinder-button-icon-reload    { background-position: 0 -160px; }
-.elfinder-button-icon-open      { background-position: 0 -176px; } 
+.elfinder-button-icon-open      { background-position: 0 -176px; }
 .elfinder-button-icon-mkdir     { background-position: 0 -192px; }
 .elfinder-button-icon-mkfile    { background-position: 0 -208px; }
 .elfinder-button-icon-rm        { background-position: 0 -224px; }
@@ -137,6 +137,7 @@
 .elfinder-button-icon-accept    { background-position: 0 -736px; }
 .elfinder-button-icon-opendir   { background-position: 0  -32px; }
 .elfinder-button-icon-menu      { background-position: 0 -752px; }
+.elfinder-button-icon-permissions { background-position: 0 -64px; }
 
 /* button with dropdown menu*/
 .elfinder .elfinder-menubutton { overflow:visible; }
@@ -256,7 +257,7 @@
 	height:18px;
 	top: 50%;
 	margin:-8px 4px 0 4px;
-	opacity: .6; 
+	opacity: .6;
 	filter:Alpha(Opacity=60);
 }
 .elfinder-button-search .ui-checkboxradio-icon {
@@ -285,4 +286,3 @@
 		rgba(0,0,0,0.1) 95%,
 		rgba(0,0,0,0) 100%);
 }
-

@@ -113,6 +113,7 @@ if (elFinder && elFinder.prototype && typeof(elFinder.prototype.i18) == 'object'
 			'cmdhelp'      : 'About this software',
 			'cmdhome'      : 'Home',
 			'cmdinfo'      : 'Get info',
+			'cmdpermissions' : 'Permissions',
 			'cmdmkdir'     : 'New folder',
 			'cmdmkdirin'   : 'Into New Folder', // from v2.1.7 added 19.2.2016
 			'cmdmkfile'    : 'New text file',
@@ -431,4 +432,3 @@ if (elFinder && elFinder.prototype && typeof(elFinder.prototype.i18) == 'object'
 		}
 	};
 }
-
