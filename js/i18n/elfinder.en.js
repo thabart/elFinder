@@ -158,6 +158,7 @@ if (elFinder && elFinder.prototype && typeof(elFinder.prototype.i18) == 'object'
 			/******************************** notifications ********************************/
 			'ntfopen'     : 'Open folder',
 			'ntffile'     : 'Open file',
+			'ntfpermissions' : 'Open permissions',
 			'ntfreload'   : 'Reload folder content',
 			'ntfmkdir'    : 'Creating directory',
 			'ntfmkfile'   : 'Creating files',

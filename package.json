@@ -28,5 +28,8 @@
     "csso": "<2.0.0",
     "jake": "~8.0.12",
     "uglify-js": "~2.6.2"
+  },
+  "dependencies": {
+    "express": "^4.13.4"
   }
 }

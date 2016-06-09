@@ -10,3 +10,7 @@ elFinderVolumeSVN.class.php
 connector-svn.php
 node_modules
 connector.php
+elfinder.full.js
+elfinder.min.js
+elfinder.full.css
+elfinder.min.css
