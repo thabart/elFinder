@@ -32,6 +32,11 @@ elFinder.prototype.commands.permissions = function() {
               xhr.abort();
             }
           });
+        },
+        open: function() {
+          $(this).find('#add-permission-'+file.hash).on('click', function() {
+            // add the logic here to add permissions
+          });
         }
 			},
       constructRemovableTiles = function(data) {
@@ -84,7 +89,7 @@ elFinder.prototype.commands.permissions = function() {
           claimsView = claimsView.replace('{claims}', 'no claim');
         }
         else {
-          var claimContent = "<div><select>{selectOptions}</select><input type='text' style='margin:0 5px 0 5px;' /><button type='button'>Add</button></div><div>{assignedPermissions}</div>";
+          var claimContent = "<div><select>{selectOptions}</select><input type='text' style='margin:0 5px 0 5px;' /><button type='button' id='add-permission-"+file.hash+"'>Add</button></div><div>{assignedPermissions}</div>";
           var selectOptions = "";
           var assignedPermissions = "";
           data['claims'].forEach(c => selectOptions += '<option>'+c+'</option>');
