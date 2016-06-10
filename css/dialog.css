@@ -324,7 +324,7 @@ button.elfinder-info-button {
 
 /************************* PERMISSION STYLE ***********************************/
 
-.elfinder-permissions-clientile {
+.elfinder-permissions-checkbox {
 	display:inline-block;
 	margin:2px;
 	border:1px solid #cccccc;
@@ -332,6 +332,6 @@ button.elfinder-info-button {
 	padding:5px;
 }
 
-.elfinder-permissions-clients {
+.elfinder-permissions-padding {
 	padding: 5px 0 5px 0px;
 }
