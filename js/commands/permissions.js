@@ -142,10 +142,20 @@ elFinder.prototype.commands.permissions = function() {
         });
       },
       displayView = function(data) {
-        var title = 'Manage <i>\'' + file.name + '\'</i> permissions ';
+        var title = 'Manage <i>\'' + file.name + '\'</i> permissions (<i>{information}</i>)';
         var clientsView = '<label>Allowed clients</label><div class=\'allowed-clients\'>{clients}</div>';
         var claimsView = '<label>Allowed claims</label><div>{claims}</div><div id="assigned-claims-'+file.hash+'" class=\'assigned-claims\'>{assignedClaims}</div>';
         var permissionsView = '<label>Permissions</label><div class=\'assigned-permissions\'>{permissions}</div>';
+        if (!data.hasOwnProperty('is_owner')) {
+          title = title.replace('{information}', 'no permission');
+        } else {
+          if (data['is_owner']) {
+            title = title.replace('{information}', 'permissions owner');
+          } else {
+            title = title.replace('{information}', 'permissions are inherited from a parent');
+          }
+        }
+
         // Fill-in client information
         if (!data['clients'] || data['clients'].length === 0) {
           clientsView = clientsView.replace('{clients}', 'no client');
