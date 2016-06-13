@@ -82,6 +82,7 @@ elFinder.prototype.commands.permissions = function() {
                 type: 'addpermissions',
                 cnt: -1
               });
+              $(self).elfinderdialog('close');
             }));
           });
           $(self).find('#add-permission-'+file.hash).on('click', function() {
