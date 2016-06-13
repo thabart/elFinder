@@ -8,7 +8,7 @@ elFinder.prototype.commands.permissions = function() {
   }];
   this.tpl = {
     main     : '<div class="ui-helper-clearfix elfinder-info-title">{title}</div><table class="elfinder-info-tb">{content}</table>',
-    content  : '<div class=\'elfinder-permissions-padding\'>{clients}</div><div class=\'elfinder-permissions-padding\'>{claims}</div><div class=\'elfinder-permissions-padding\'>{permissions}</div>'
+    content  : '<div class=\'elfinder-permissions-padding\'>{clients}</div><div class=\'elfinder-permissions-padding\'>{claims}</div><div class=\'elfinder-permissions-padding\'>{permissions}</div><button class=\'save-permission\'>Save</button>'
   };
   this.getstate = function(sel) {
 		var sel = this.files(sel);
@@ -34,7 +34,36 @@ elFinder.prototype.commands.permissions = function() {
           });
         },
         open: function() {
-          $(this).find('#add-permission-'+file.hash).on('click', function() {
+          var self = this;
+          $(self).find('#claim-value-'+file.hash).keydown(function(e) {
+  					e.stopImmediatePropagation();
+          });
+          $(self).find('.save-permission').on('click', function() {
+            var getSelectedValues = function(checkboxes) {
+              var result = [];
+              checkboxes.each(function() {
+                result.push($(this).next().html());
+              });
+
+              return result;
+            };
+            var clients = $(self).find('.allowed-clients input[type=\'checkbox\']:checked');
+            var permissions = $(self).find('.assigned-permissions input[type=\'checkbox\']:checked');
+            var claims = $(self).find('.assigned-claims .elfinder-permissions-checkbox').children('label');
+            var assignedClientIds = getSelectedValues(clients),
+              assignedPermissions = getSelectedValues(permissions),
+              assignedClaims = [];
+
+            claims.each(function() {
+              var concatenatedClaim = $(this).html();
+              assignedClaims.push({
+                type: concatenatedClaim.slice(0, concatenatedClaim.indexOf(':')),
+                value: concatenatedClaim.slice(concatenatedClaim.indexOf(':') + 1, concatenatedClaim.length)
+              });
+            });
+            // Execute the instruction
+          });
+          $(self).find('#add-permission-'+file.hash).on('click', function() {
             var claimType = $('#claim-type-'+file.hash).val(),
               claimValue = $('#claim-value-'+file.hash).val();
             addClaim({
@@ -48,7 +77,7 @@ elFinder.prototype.commands.permissions = function() {
       constructRemovableTiles = function(data) {
           var content = "";
           data.forEach(d => {
-            content += "<div class='elfinder-permissions-checkbox can-be-removed'>"+d.type+":"+d.value+"<a href='#'>(Remove)</a></div>";
+            content += "<div class='elfinder-permissions-checkbox can-be-removed'><label>"+d.type+":"+d.value+"</label><a href='#'>(Remove)</a></div>";
           });
           return content;
       },
@@ -57,9 +86,9 @@ elFinder.prototype.commands.permissions = function() {
         var index = 1;
         data[name].forEach(d => {
           if (data[assignedName] && data[assignedName].indexOf(d) > -1) {
-            content += "<div class='elfinder-permissions-checkbox'><input type='checkbox' checked/>"+d+"</div>";
+            content += "<div class='elfinder-permissions-checkbox'><input type='checkbox' checked/><label>"+d+"</label></div>";
           } else {
-            content += "<div class='elfinder-permissions-checkbox'><input type='checkbox'/>"+d+"</div>";
+            content += "<div class='elfinder-permissions-checkbox'><input type='checkbox'/><label>"+d+"</label></div>";
           }
           if (index === 4) {
             index = 0;
@@ -92,9 +121,9 @@ elFinder.prototype.commands.permissions = function() {
       },
       displayView = function(data) {
         var title = 'Manage <i>\'' + file.name + '\'</i> permissions ';
-        var clientsView = '<label>Allowed clients</label><div>{clients}</div>';
-        var claimsView = '<label>Allowed claims</label><div>{claims}</div><div id="assigned-claims-'+file.hash+'" style="max-width:450px;">{assignedClaims}</div>';
-        var permissionsView = '<label>Permissions</label><div>{permissions}</div>';
+        var clientsView = '<label>Allowed clients</label><div class=\'allowed-clients\'>{clients}</div>';
+        var claimsView = '<label>Allowed claims</label><div>{claims}</div><div id="assigned-claims-'+file.hash+'" class=\'assigned-claims\'>{assignedClaims}</div>';
+        var permissionsView = '<label>Permissions</label><div class=\'assigned-permissions\'>{permissions}</div>';
         // Fill-in client information
         if (!data['clients'] || data['clients'].length === 0) {
           clientsView = clientsView.replace('{clients}', 'no client');
