@@ -61,7 +61,18 @@ elFinder.prototype.commands.permissions = function() {
                 value: concatenatedClaim.slice(concatenatedClaim.indexOf(':') + 1, concatenatedClaim.length)
               });
             });
-            // Execute the instruction
+            // Ex
+            reqs.push(fm.request({
+              data: { cmd: 'mkperm',
+                target: file.hash,
+                clients: assignedClientIds,
+                permissions: assignedPermissions,
+                claims: assignedClaims
+              },
+              preventDefault: true
+            }).done(function(data) {
+
+            }));
           });
           $(self).find('#add-permission-'+file.hash).on('click', function() {
             var claimType = $('#claim-type-'+file.hash).val(),
