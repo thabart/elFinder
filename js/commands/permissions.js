@@ -62,6 +62,13 @@ elFinder.prototype.commands.permissions = function() {
               });
             });
             // Ex
+            fm.notify({
+              type: 'addpermissions',
+              msg: 'Add permissions',
+              cnt: 1,
+              hideCnt: true
+            });
+
             reqs.push(fm.request({
               data: { cmd: 'mkperm',
                 target: file.hash,
@@ -71,7 +78,10 @@ elFinder.prototype.commands.permissions = function() {
               },
               preventDefault: true
             }).done(function(data) {
-
+              fm.notify({
+                type: 'addpermissions',
+                cnt: -1
+              });
             }));
           });
           $(self).find('#add-permission-'+file.hash).on('click', function() {
@@ -206,12 +216,5 @@ elFinder.prototype.commands.permissions = function() {
         cnt: -1
       });
     }));
-    //
-    // var dialog = fm.getUI().find('#'+id);
-    // console.log(dialog);
-    //  dialog.elfinderdialog('toTop');
-    // if (dialog.length) {
-    //	return $.Deferred().resolve();
-    // }
   }
 }

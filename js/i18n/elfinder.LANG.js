@@ -166,6 +166,7 @@ if (elFinder && elFinder.prototype && typeof(elFinder.prototype.i18) == 'object'
 			'ntfopen'     : 'Open folder',
 			'ntffile'     : 'Open file',
 			'ntfpermissions' : 'Open permissions',
+			'ntfaddpermissions': 'Add permissions',
 			'ntfreload'   : 'Reload folder content',
 			'ntfmkdir'    : 'Creating directory',
 			'ntfmkfile'   : 'Creating files',
