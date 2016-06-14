@@ -59,6 +59,10 @@
 /* write only */
 .elfinder-wo .elfinder-perms { background-position:0 -80px;}
 
+.elfinder-permowner {
+	border: 1px solid rgba(255, 0, 0, 0.61) !important;
+}
+
 /* locked */
 .elfinder-lock {
 	background-position:0 -656px;
@@ -109,12 +113,12 @@
 	height:14px;
 	text-align:center;
 	padding-top:2px;
-	
+
 	font-weight:bold;
 	color:#fff;
 	background-color:red;
-	-moz-border-radius: 8px; 
-	-webkit-border-radius: 8px; 
+	-moz-border-radius: 8px;
+	-webkit-border-radius: 8px;
 	border-radius: 8px;
 }
 
@@ -140,4 +144,3 @@
 [draggable=true] {
 	-khtml-user-drag: element;
 }
-
