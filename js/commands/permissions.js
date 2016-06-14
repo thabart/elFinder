@@ -20,10 +20,16 @@ elFinder.prototype.commands.permissions = function() {
       view = this.tpl.main,
       reqs = [],
       content = this.tpl.content,
+			incwd    = (fm.cwd().hash == file.hash),
+			dfrd     = $.Deferred()
+        .done(function(data){
+          fm.exec('reload', data.added[0].hash);
+        }),
       opts    = {
         title : 'Permissions',
 				width : 'auto',
         close: function() {
+          fm.unlockfiles({files : [file.hash]})
           $(this).elfinderdialog('destroy');
           $.each(reqs, function(i, req) {
             var xhr = (req && req.xhr)? req.xhr : null;
@@ -35,6 +41,7 @@ elFinder.prototype.commands.permissions = function() {
         },
         open: function() {
           var self = this;
+          fm.lockfiles({files : [file.hash]});
           $(self).find('#claim-value-'+file.hash).keydown(function(e) {
   					e.stopImmediatePropagation();
           });
@@ -82,6 +89,7 @@ elFinder.prototype.commands.permissions = function() {
                 type: 'addpermissions',
                 cnt: -1
               });
+              dfrd.resolve(data);
               $(self).elfinderdialog('close');
             }));
           });
