@@ -431,7 +431,7 @@ elFinder.prototype._options = {
 			}
 		},
 
-		help : {view : ['about', 'shortcuts', 'help', 'debug']}
+		help : {view : ['shortcuts']}
 	},
 
 	/**

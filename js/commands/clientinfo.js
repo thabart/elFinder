@@ -6,6 +6,17 @@ elFinder.prototype.commands.clientinfo = function() {
   this.shortcuts = [{
 		pattern     : 'f9'
   }];
+  this.tpl = {
+    main : '<div class="ui-helper-clearfix elfinder-info-title">'+
+      '<img class="elfinder-clientinfo-logo" src="{logoUri}" />' +
+      '<strong>Client information (<a href="{editUrl}">Edit</a>)</strong>'+
+      '<span class="elfinder-info-kind">{title}</span></div>{content}',
+    content: '<table class="elfinder-info-tb"><tbody>'+
+      '<tr><td>Identifier</td><td>{clientId}</td></tr>'+
+      '<tr><td>Secret</td><td>{clientSecret}</td></tr>'+
+      '<tr><td>Callback URIs</td><td>{callbackUrls}</td></tr>'+
+      '</tbody></table>'
+  };
   this.getstate = function(sel) {
     var sel = this.files(sel);
     var result = !this._disabled && sel.length == 1 && sel[0].phash && sel[0].phash === clientsHash ? 0 : -1;
@@ -16,6 +27,8 @@ elFinder.prototype.commands.clientinfo = function() {
       id = fm.namespace+'-clientinfo-'+file.hash,
       reqs = [],
       dialog = fm.getUI().find('#'+id),
+      view = this.tpl.main,
+      content = this.tpl.content,
       opts = {
         title : 'Client Information',
         width: 'auto',
@@ -25,7 +38,19 @@ elFinder.prototype.commands.clientinfo = function() {
         }
       },
       displayClientInfo = function(data) {
-        dialog = fm.dialog("", opts);
+        var callbackUrls = "no callback urls";
+        if (data.redirect_uris && data.redirect_uris.length > 0) {
+          callbackUrls = data.redirect_uris.join(',');
+        }
+
+        content = content.replace('{clientId}', data.client_id);
+        content = content.replace('{clientSecret}', data.client_secret);
+        content = content.replace('{callbackUrls}', callbackUrls);
+        view = view.replace('{title}', file.name);
+        view = view.replace('{editUrl}', '#');
+        view = view.replace('{logoUri}', data.logo_uri);
+        view = view.replace('{content}', content);
+        dialog = fm.dialog(view, opts);
       };
 
     if (this.getstate([file.hash]) < 0) {
@@ -49,6 +74,7 @@ elFinder.prototype.commands.clientinfo = function() {
       cmd: 'clientinfo',
       target: file.hash.replace(clientsHash + '_','')
     }).done(function(data) {
+      console.log(data);
       displayClientInfo(data);
       fm.notify({
         type: 'clientinformation',

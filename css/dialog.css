@@ -334,8 +334,16 @@ button.elfinder-info-button {
 	padding:5px;
 }
 
-.elfinder-permissions-padding {
+.elfinder-permissions-padding,
+.elfinder-clientinfo-padding {
 	padding: 5px 0 5px 0px;
+}
+
+.elfinder-clientinfo-logo {
+	float:left;
+	padding-right:5px;
+	width: 50px;
+	height: 50px;
 }
 
 #assigned-claims {
