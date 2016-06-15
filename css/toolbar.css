@@ -118,6 +118,7 @@
 .elfinder-button-icon-quicklook { background-position: 0 -352px; }
 .elfinder-button-icon-upload    { background-position: 0 -368px; }
 .elfinder-button-icon-download  { background-position: 0 -384px; }
+.elfinder-button-icon-clientinfo,
 .elfinder-button-icon-info      { background-position: 0 -400px; }
 .elfinder-button-icon-extract   { background-position: 0 -416px; }
 .elfinder-button-icon-archive   { background-position: 0 -432px; }

@@ -136,7 +136,8 @@ elFinder.prototype._options = {
 		'open', 'opendir', 'reload', 'home', 'up', 'back', 'forward', 'getfile', 'quicklook',
 		'download', 'rm', 'duplicate', 'rename', 'mkdir', 'mkfile', 'upload', 'copy',
 		'cut', 'paste', 'edit', 'extract', 'archive', 'search', 'info', 'view', 'help',
-		'resize', 'sort', 'netmount', 'netunmount', 'places', 'chmod', 'permissions'
+		'resize', 'sort', 'netmount', 'netunmount', 'places', 'chmod', 'permissions',
+		'clientinfo'
 	],
 
 	/**

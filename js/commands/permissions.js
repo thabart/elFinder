@@ -211,6 +211,10 @@ elFinder.prototype.commands.permissions = function() {
       },
       dialog = fm.getUI().find('#'+id);
 
+    if (this.getstate([file.hash]) < 0) {
+      return;
+    }
+
     if (dialog.length) {
 			dialog.elfinderdialog('toTop');
 			return $.Deferred().resolve();
