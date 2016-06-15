@@ -131,7 +131,6 @@ elFinder.prototype.commands.help = function() {
 
 	fm.one('load', function() {
 		var parts = self.options.view || ['about', 'shortcuts', 'help', 'debug'];
-		console.log(self.options.view);
 		$.each(parts, function(i, title) {
 			html.push(tab[r](/\{id\}/g, title)[r](/\{title\}/, fm.i18n(title)));
 		});
@@ -190,7 +189,7 @@ elFinder.prototype.commands.help = function() {
 			content.find('#apiver').text(this.fm.api);
 			this.dialog = this.fm.dialog(content, {title : this.title, width : 530, autoOpen : false, destroyOnClose : false});
 		}
-		
+
 		debugRender();
 
 		this.dialog.elfinderdialog('open').find('.ui-tabs-nav li a:first').click();
