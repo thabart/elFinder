@@ -33,6 +33,14 @@ elFinder.prototype.commands.clientinfo = function() {
         title : 'Client Information',
         width: 'auto',
         close: function() {
+          $(this).elfinderdialog('destroy');
+          $.each(reqs, function(i, req) {
+            var xhr = (req && req.xhr)? req.xhr : null;
+            if (xhr && xhr.state() == 'pending') {
+              xhr.quiet = true;
+              xhr.abort();
+            }
+          });
         },
         open: function() {
         }
@@ -51,6 +59,8 @@ elFinder.prototype.commands.clientinfo = function() {
         view = view.replace('{logoUri}', data.logo_uri);
         view = view.replace('{content}', content);
         dialog = fm.dialog(view, opts);
+        dialog.addClass('dialog-size');
+        dialog.attr('id', id);
       };
 
     if (this.getstate([file.hash]) < 0) {
@@ -59,7 +69,7 @@ elFinder.prototype.commands.clientinfo = function() {
 
     if (dialog.length) {
 			dialog.elfinderdialog('toTop');
-      return;
+			return $.Deferred().resolve();
 		}
 
     // display loading spinner
@@ -74,7 +84,6 @@ elFinder.prototype.commands.clientinfo = function() {
       cmd: 'clientinfo',
       target: file.hash.replace(clientsHash + '_','')
     }).done(function(data) {
-      console.log(data);
       displayClientInfo(data);
       fm.notify({
         type: 'clientinformation',

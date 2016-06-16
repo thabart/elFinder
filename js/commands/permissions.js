@@ -56,7 +56,7 @@ elFinder.prototype.commands.permissions = function() {
             };
             var clients = $(self).find('.allowed-clients input[type=\'checkbox\']:checked');
             var permissions = $(self).find('.assigned-permissions input[type=\'checkbox\']:checked');
-            var claims = $(self).find('.assigned-claims .elfinder-permissions-checkbox').children('label');
+            var claims = $(self).find('.assigned-claims .elfinder-white-box').children('label');
             var assignedClientIds = getSelectedValues(clients),
               assignedPermissions = getSelectedValues(permissions),
               assignedClaims = [];
@@ -107,25 +107,18 @@ elFinder.prototype.commands.permissions = function() {
       constructRemovableTiles = function(data) {
           var content = "";
           data.forEach(d => {
-            content += "<div class='elfinder-permissions-checkbox can-be-removed'><label>"+d.type+":"+d.value+"</label><a href='#'>(Remove)</a></div>";
+            content += "<div class='elfinder-white-box can-be-removed'><label>"+d.type+":"+d.value+"</label><a href='#'>(Remove)</a></div>";
           });
           return content;
       },
       contructTiles = function(data, name, assignedName) {
         var content = "";
-        var index = 1;
         data[name].forEach(d => {
           if (data[assignedName] && data[assignedName].indexOf(d) > -1) {
-            content += "<div class='elfinder-permissions-checkbox'><input type='checkbox' checked/><label>"+d+"</label></div>";
+            content += "<div class='elfinder-white-box'><input type='checkbox' checked/><label>"+d+"</label></div>";
           } else {
-            content += "<div class='elfinder-permissions-checkbox'><input type='checkbox'/><label>"+d+"</label></div>";
+            content += "<div class='elfinder-white-box'><input type='checkbox'/><label>"+d+"</label></div>";
           }
-          if (index === 4) {
-            index = 0;
-            content += "</br>";
-          }
-
-          index++;
         });
         return content;
       },
@@ -152,7 +145,7 @@ elFinder.prototype.commands.permissions = function() {
       displayView = function(data) {
         var title = 'Manage <i>\'' + file.name + '\'</i> permissions (<i>{information}</i>)';
         var clientsView = '<label>Allowed clients</label><div class=\'allowed-clients\'>{clients}</div>';
-        var claimsView = '<label>Allowed claims</label><div>{claims}</div><div id="assigned-claims-'+file.hash+'" class=\'assigned-claims\'>{assignedClaims}</div>';
+        var claimsView = '<label>Allowed claims</label><div>{claims}</div><div id="assigned-claims-'+file.hash+'">{assignedClaims}</div>';
         var permissionsView = '<label>Permissions</label><div class=\'assigned-permissions\'>{permissions}</div>';
         if (!data.hasOwnProperty('is_owner')) {
           title = title.replace('{information}', 'no permission');
@@ -208,6 +201,7 @@ elFinder.prototype.commands.permissions = function() {
         view = view.replace('{title}', title);
         var dialog = fm.dialog(view, opts);
         dialog.attr('id', id);
+        dialog.addClass('dialog-size');
       },
       dialog = fm.getUI().find('#'+id);
 

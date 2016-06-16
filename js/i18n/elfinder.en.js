@@ -114,6 +114,7 @@ if (elFinder && elFinder.prototype && typeof(elFinder.prototype.i18) == 'object'
 			'cmdhome'      : 'Home',
 			'cmdinfo'      : 'Get info',
 			'cmdpermissions' : 'Permissions',
+			'cmdauthpolicy': 'Authorization policy',
 			'cmdclientinfo' : 'Client information',
 			'cmdmkdir'     : 'New folder',
 			'cmdmkdirin'   : 'Into New Folder', // from v2.1.7 added 19.2.2016
@@ -161,6 +162,7 @@ if (elFinder && elFinder.prototype && typeof(elFinder.prototype.i18) == 'object'
 			'ntffile'     : 'Open file',
 			'ntfpermissions' : 'Open permissions',
 			'ntfclientinformation': 'Open client information',
+			'ntfauthpolicy': 'Open authorization policy',
 			'ntfaddpermissions': 'Add permissions',
 			'ntfreload'   : 'Reload folder content',
 			'ntfmkdir'    : 'Creating directory',
