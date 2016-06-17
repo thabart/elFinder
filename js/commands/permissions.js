@@ -145,7 +145,7 @@ elFinder.prototype.commands.permissions = function() {
       displayView = function(data) {
         var title = 'Manage <i>\'' + file.name + '\'</i> permissions (<i>{information}</i>)';
         var clientsView = '<label>Allowed clients</label><div class=\'allowed-clients\'>{clients}</div>';
-        var claimsView = '<label>Allowed claims</label><div>{claims}</div><div id="assigned-claims-'+file.hash+'">{assignedClaims}</div>';
+        var claimsView = '<label>Allowed claims</label><div>{claims}</div><div id="assigned-claims-'+file.hash+'" class="assigned-claims">{assignedClaims}</div>';
         var permissionsView = '<label>Permissions</label><div class=\'assigned-permissions\'>{permissions}</div>';
         if (!data.hasOwnProperty('is_owner')) {
           title = title.replace('{information}', 'no permission');
