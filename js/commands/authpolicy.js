@@ -26,6 +26,7 @@ elFinder.prototype.commands.authpolicy = function() {
       id = fm.namespace+'-clientinfo-'+file.hash,
       view = this.tpl.main,
       content = this.tpl.content,
+      options = this.options,
       reqs = [],
       dialog = fm.getUI().find('#'+id),
       opts = {
@@ -69,7 +70,7 @@ elFinder.prototype.commands.authpolicy = function() {
         content = content.replace('{clients}', clients);
         content = content.replace('{claims}', claims);
         content = content.replace('{permissions}', permissions);
-        view = view.replace('{editUrl}', '#')
+        view = view.replace('{editUrl}', options.editUrl.replace('{authpolicy_id}', data.id));
         view = view.replace('{content}', content);
         dialog = fm.dialog(view, opts);
         dialog.addClass('dialog-size');

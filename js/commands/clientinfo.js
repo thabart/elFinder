@@ -26,6 +26,7 @@ elFinder.prototype.commands.clientinfo = function() {
     var file = this.files(hashes)[0],
       id = fm.namespace+'-clientinfo-'+file.hash,
       reqs = [],
+      options = this.options,
       dialog = fm.getUI().find('#'+id),
       view = this.tpl.main,
       content = this.tpl.content,
@@ -55,7 +56,7 @@ elFinder.prototype.commands.clientinfo = function() {
         content = content.replace('{clientSecret}', data.client_secret);
         content = content.replace('{callbackUrls}', callbackUrls);
         view = view.replace('{title}', file.name);
-        view = view.replace('{editUrl}', '#');
+        view = view.replace('{editUrl}', options.editUrl.replace('{client_id}', data.client_id));
         var logoUri = data.logo_uri;
         if (!logoUri) {
           logoUri = 'img/unknown.png';

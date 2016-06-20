@@ -137,7 +137,7 @@ elFinder.prototype._options = {
 		'download', 'rm', 'duplicate', 'rename', 'mkdir', 'mkfile', 'upload', 'copy',
 		'cut', 'paste', 'search', 'info', 'view', 'help',
 		'resize', 'sort', 'places', 'chmod', 'permissions',
-		'clientinfo', 'authpolicy', 'addclient', 'removeclient'
+		'clientinfo', 'authpolicy', 'addclient', 'removeclient', 'rmpolicy'
 	],
 
 	/**
@@ -164,6 +164,9 @@ elFinder.prototype._options = {
 		// 		return [ { pattern: 'ctrl+e ctrl+down numpad_enter' + (fm.OS != 'mac' && ' enter') } ];
 		// 	}
 		// },
+		clientinfo: {
+			editUrl: 'http://localhost/clients/{client_id}'
+		},
 		// "getfile" command options.
 		getfile : {
 			onlyURL  : false,

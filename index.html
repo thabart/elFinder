@@ -94,6 +94,7 @@
 	<script src="js/commands/authpolicy.js"></script>
 	<script src="js/commands/addclient.js"></script>
 	<script src="js/commands/removeclient.js"></script>
+	<script src="js/commands/rmpolicy.js"></script>
 
 	<!-- elfinder languages -->
 	<script src="js/i18n/elfinder.ar.js"></script>
@@ -148,8 +149,8 @@
 				},
         contextmenu: {
 						cwd    : ['reload', 'back', '|', 'upload', 'mkdir', 'mkfile', 'paste', 'addclient', '|', 'sort', '|', 'info'],
-						navbar : ['open', '|', 'copy', 'cut', 'paste', 'duplicate', '|', 'rm', 'removeclient', '|', 'clientinfo', 'permissions', 'authpolicy', 'addclient'],
-            files: ['getfile', '|', 'mkdir', '|', 'copy', 'cut', 'paste', 'duplicate', '|', 'rm', 'removeclient', '|', 'rename', '|', 'clientinfo', 'permissions', 'authpolicy']
+						navbar : ['open', '|', 'copy', 'cut', 'paste', 'duplicate', '|', 'rm', 'removeclient', 'rmpolicy', '|', 'clientinfo', 'permissions', 'authpolicy', 'addclient'],
+            files: ['getfile', '|', 'mkdir', '|', 'copy', 'cut', 'paste', 'duplicate', '|', 'rm', 'removeclient', 'rmpolicy', '|', 'rename', '|', 'clientinfo', 'permissions', 'authpolicy']
         },
         uiOptions: {
           toolbar: [
@@ -161,7 +162,15 @@
 			      ['view', 'sort'],
             ['permissions']
           ]
-        }
+        },
+				commandsOptions: {
+					clientinfo: {
+						editUrl: 'https://{client_id}'
+					},
+					authpolicy: {
+						editUrl: 'http://{authpolicy_id}'
+					}
+				}
 			});
 		});
 	</script>
