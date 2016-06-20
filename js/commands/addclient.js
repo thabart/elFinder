@@ -5,7 +5,7 @@ elFinder.prototype.commands.addclient = function() {
     clientsHash = 'assets_openid_clients';
   this.tpl = {
     main : '<div class="ui-helper-clearfix elfinder-info-title">' +
-      '<strong style="display:inline-block; padding-right:2px;">Create a client</strong><span class="error" style="color:red;font-style:italic;"></span>'+
+      '<strong style="display:inline-block; padding-right:2px;">Create a client</strong>'+
       '</div>{content}',
     content : '<table class="elfinder-info-tb"><tbody>' +
       '<tr><td>Redirect Uris</td><td><input type="text" name="redirect_uris" /></td></tr>' +
@@ -47,7 +47,6 @@ elFinder.prototype.commands.addclient = function() {
               cnt: 1,
               hideCnt: true
             });
-            $(self).find('.error').html("");
             reqs.push(fm.request({
               data: { cmd: 'mkclient',
                 redirect_uris: redirectUris
@@ -61,7 +60,11 @@ elFinder.prototype.commands.addclient = function() {
               dfrd.resolve();
               $(self).elfinderdialog('close');
             }).fail(function() {
-              $(self).find('.error').html("invalid redirect uris");
+              fm.notify({
+                type: 'addclient',
+                cnt: -1
+              });
+              fm.trigger('error', {error : 'invalid redirect uris'});
             }));
           });
         },
