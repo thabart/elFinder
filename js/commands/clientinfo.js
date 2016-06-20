@@ -4,7 +4,7 @@ elFinder.prototype.commands.clientinfo = function() {
   var fm = this.fm,
     clientsHash = 'assets_openid_clients';
   this.shortcuts = [{
-		pattern     : 'f9'
+		pattern     : 'f4'
   }];
   this.tpl = {
     main : '<div class="ui-helper-clearfix elfinder-info-title">'+
@@ -56,7 +56,11 @@ elFinder.prototype.commands.clientinfo = function() {
         content = content.replace('{callbackUrls}', callbackUrls);
         view = view.replace('{title}', file.name);
         view = view.replace('{editUrl}', '#');
-        view = view.replace('{logoUri}', data.logo_uri);
+        var logoUri = data.logo_uri;
+        if (!logoUri) {
+          logoUri = 'img/unknown.png';
+        }
+        view = view.replace('{logoUri}', logoUri);
         view = view.replace('{content}', content);
         dialog = fm.dialog(view, opts);
         dialog.addClass('dialog-size');

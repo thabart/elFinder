@@ -92,6 +92,7 @@
 	<script src="js/commands/permissions.js"></script>
 	<script src="js/commands/clientinfo.js"></script>
 	<script src="js/commands/authpolicy.js"></script>
+	<script src="js/commands/addclient.js"></script>
 
 	<!-- elfinder languages -->
 	<script src="js/i18n/elfinder.ar.js"></script>
@@ -145,7 +146,8 @@
 					// ...
 				},
         contextmenu: {
-            navbar : ['open', '|', 'copy', 'cut', 'paste', 'duplicate', '|', 'rm', '|', 'clientinfo', 'permissions', 'authpolicy'],
+						cwd    : ['reload', 'back', '|', 'upload', 'mkdir', 'mkfile', 'paste', 'addclient', '|', 'sort', '|', 'info'],
+						navbar : ['open', '|', 'copy', 'cut', 'paste', 'duplicate', '|', 'rm', '|', 'clientinfo', 'permissions', 'authpolicy', 'addclient'],
             files: ['getfile', '|', 'mkdir', '|', 'copy', 'cut', 'paste', 'duplicate', '|', 'rm', '|', 'rename', '|', 'clientinfo', 'permissions', 'authpolicy']
         },
         uiOptions: {
