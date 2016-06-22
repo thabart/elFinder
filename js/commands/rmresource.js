@@ -1,6 +1,6 @@
 'use strict';
 
-elFinder.prototype.commands.rmpolicy = function() {
+elFinder.prototype.commands.rmresource = function() {
   var fm = this.fm,
     umaResourceHash = 'assets_uma_resources';
   this.getstate= function(sel) {

@@ -8,6 +8,7 @@ elFinder.prototype.commands.authpolicy = function() {
   }];
   this.tpl = {
     main : '<div class="ui-helper-clearfix elfinder-info-title">' +
+      '<img class="elfinder-clientinfo-logo" src="img/policy.png" />' +
       '<strong>Authorization policy (<a href="{editUrl}">Edit</a>)</strong></div>{content}',
     content : '<table class="elfinder-info-tb" style="table-layout:fixed;"><tbody>' +
       '<tr><td>Resource identifiers</td><td>{resources}</td></tr>' +

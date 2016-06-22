@@ -1,6 +1,6 @@
 'use strict';
 
-elFinder.prototype.commands.rmpolicy = function() {
+elFinder.prototype.commands.rmscope = function() {
   var fm = this.fm,
     scopesHash = 'assets_openid_scopes';
   this.getstate= function(sel) {
