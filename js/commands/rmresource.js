@@ -5,34 +5,42 @@ elFinder.prototype.commands.rmresource = function() {
     umaResourceHash = 'assets_uma_resources';
   this.getstate= function(sel) {
     var sel = this.files(sel);
-    var result = !this._disabled && sel.length == 1 && sel[0].phash === umaResourceHash ? 0 : -1;
-    return result;
+		sel = sel || fm.selected();
+		return !this._disabled && sel.length && $.map(sel, function(h) { return h && h.phash && h.phash === umaResourceHash ? h : null }).length == sel.length
+			? 0 : -1;
   };
   this.exec = function(hashes) {
+    var files = this.files(hashes);
+    var text = 'Do-you want to remove the resource';
+    if (files.length > 1) {
+      text = 'Do-you want to remove the {'+files.length+'} resources ?';
+    }
+
     var self = this,
-      file = this.files(hashes)[0],
+      files = this.files(hashes),
       reqs = [],
       dfrd = $.Deferred()
         .done(function(data){
-          fm.exec('reload', file.phash);
+          fm.exec('reload', files[0].phash);
         }),
       opts = {
-        title: 'Resource',
-        text : ['Do-you want to remove the resource ?'],
+        title: 'Delete',
+        text : [text],
         accept: {
           label: 'btnYes',
           callback: function() {
             fm.notify({
               type: 'rmresource',
-              msg: 'Remove resource',
+              msg: 'Remove resource(s)',
               cnt: 1,
               hideCnt: true
             });
-            var resourceId = file.hash.replace(umaResourceHash + '_', '');
+            var resourceIds = [];
+            files.forEach(file => resourceIds.push(file.hash.replace(umaResourceHash + '_', '')));
             fm.request({
               data: {
                 cmd: 'rmresource',
-                resource_id : resourceId
+                resource_ids : resourceIds
               },
               preventDefault: true
             }).done(function() {
@@ -46,7 +54,7 @@ elFinder.prototype.commands.rmresource = function() {
                 type: 'rmresource',
                 cnt: -1
               });
-              fm.trigger('error', {error : 'error occured while trying to delete the resource'});
+              fm.trigger('error', {error : 'error occured while trying to delete the resource(s)'});
             });
           }
         },

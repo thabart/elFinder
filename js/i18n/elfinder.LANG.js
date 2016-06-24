@@ -176,6 +176,7 @@ if (elFinder && elFinder.prototype && typeof(elFinder.prototype.i18) == 'object'
 			'ntfopen'     : 'Open folder',
 			'ntffile'     : 'Open file',
 			'ntfpermissions' : 'Open permissions',
+			'ntfrmresource': 'Delete resources',
 			'ntfaccessinfo' : 'Open access information',
 			'ntfresourceinfo' : 'Open resource',
 			'ntfscopeinfo' : 'Open scope',

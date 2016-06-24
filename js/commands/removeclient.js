@@ -5,34 +5,41 @@ elFinder.prototype.commands.removeclient = function() {
     clientsHash = 'assets_openid_clients';
   this.getstate= function(sel) {
     var sel = this.files(sel);
-    var result = !this._disabled && sel.length == 1 && sel[0].phash === clientsHash ? 0 : -1;
-    return result;
+		sel = sel || fm.selected();
+		return !this._disabled && sel.length && $.map(sel, function(h) { return h && h.phash && h.phash === clientsHash ? h : null }).length == sel.length
+			? 0 : -1;
   };
   this.exec = function(hashes) {
+    var files = this.files(hashes);
+    var text = 'Do-you want to remove the client';
+    if (files.length > 1) {
+      text = 'Do-you want to remove the {'+files.length+'} clients ?';
+    }
+
     var self = this,
-      file = this.files(hashes)[0],
       reqs = [],
       dfrd = $.Deferred()
         .done(function(data){
-          fm.exec('reload', file.phash);
+          fm.exec('reload', files[0].phash);
         }),
       opts = {
-        title: 'Client',
-        text : ['Do-you want to remove the client ?'],
+        title: 'Remove',
+        text : [ text ],
         accept: {
           label: 'btnYes',
           callback: function() {
             fm.notify({
               type: 'removeclient',
-              msg: 'Remove client',
+              msg: 'Remove client(s)',
               cnt: 1,
               hideCnt: true
             });
-            var clientId = file.hash.replace(clientsHash + '_', '');
+            var clientIds = [];
+            files.forEach(file => clientIds.push(file.hash.replace(clientsHash + '_', '')));
             fm.request({
               data: {
                 cmd: 'rmclient',
-                client_id : clientId
+                client_ids : clientIds
               },
               preventDefault: true
             }).done(function() {
@@ -46,7 +53,7 @@ elFinder.prototype.commands.removeclient = function() {
                 type: 'removeclient',
                 cnt: -1
               });
-              fm.trigger('error', {error : 'error occured while trying to delete the client'});
+              fm.trigger('error', {error : 'error occured while trying to delete the client(s)'});
             });
           }
         },

@@ -5,34 +5,41 @@ elFinder.prototype.commands.rmpolicy = function() {
     authPoliciesHash = 'assets_uma_authorization_policies';
   this.getstate= function(sel) {
     var sel = this.files(sel);
-    var result = !this._disabled && sel.length == 1 && sel[0].phash === authPoliciesHash ? 0 : -1;
-    return result;
+		sel = sel || fm.selected();
+		return !this._disabled && sel.length && $.map(sel, function(h) { return h && h.phash && h.phash === authPoliciesHash ? h : null }).length == sel.length
+			? 0 : -1;
   };
   this.exec = function(hashes) {
+    var files = this.files(hashes);
+    var text = 'Do-you want to remove the authorization policy';
+    if (files.length > 1) {
+      text = 'Do-you want to remove the {'+files.length+'} authorization policies ?';
+    }
+
     var self = this,
-      file = this.files(hashes)[0],
       reqs = [],
       dfrd = $.Deferred()
         .done(function(data){
-          fm.exec('reload', file.phash);
+          fm.exec('reload', files[0].phash);
         }),
       opts = {
-        title: 'Authorization policy',
-        text : ['Do-you want to remove the authorization policy ?'],
+        title: 'Remove',
+        text : [text],
         accept: {
           label: 'btnYes',
           callback: function() {
             fm.notify({
               type: 'rmpolicy',
-              msg: 'Remove authorization policy',
+              msg: 'Remove authorization policy(ies)',
               cnt: 1,
               hideCnt: true
             });
-            var authPolicyId = file.hash.replace(authPoliciesHash + '_', '');
+            var authPolicyIds = [];
+            files.forEach(file => authPolicyIds.push(file.hash.replace(authPoliciesHash + '_', '')));
             fm.request({
               data: {
                 cmd: 'rmpolicy',
-                policy_id : authPolicyId
+                policy_ids : authPolicyIds
               },
               preventDefault: true
             }).done(function() {
@@ -46,7 +53,7 @@ elFinder.prototype.commands.rmpolicy = function() {
                 type: 'rmpolicy',
                 cnt: -1
               });
-              fm.trigger('error', {error : 'error occured while trying to delete the authorization policy'});
+              fm.trigger('error', {error : 'error occured while trying to delete the authorization policy(ies)'});
             });
           }
         },

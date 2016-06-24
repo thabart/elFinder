@@ -5,34 +5,42 @@ elFinder.prototype.commands.rmscope = function() {
     scopesHash = 'assets_openid_scopes';
   this.getstate= function(sel) {
     var sel = this.files(sel);
-    var result = !this._disabled && sel.length == 1 && sel[0].phash === scopesHash ? 0 : -1;
-    return result;
+		sel = sel || fm.selected();
+		return !this._disabled && sel.length && $.map(sel, function(h) { return h && h.phash && h.phash === scopesHash ? h : null }).length == sel.length
+			? 0 : -1;
   };
   this.exec = function(hashes) {
+    var files = this.files(hashes);
+    var text = 'Do-you want to remove the scope';
+    if (files.length > 1) {
+      text = 'Do-you want to remove the {'+files.length+'} scopes ?';
+    }
+
     var self = this,
       file = this.files(hashes)[0],
       reqs = [],
       dfrd = $.Deferred()
         .done(function(data){
-          fm.exec('reload', file.phash);
+          fm.exec('reload', files[0].phash);
         }),
       opts = {
-        title: 'Scope',
-        text : ['Do-you want to remove the scope ?'],
+        title: 'Remove',
+        text : [text],
         accept: {
           label: 'btnYes',
           callback: function() {
             fm.notify({
               type: 'rmscope',
-              msg: 'Remove resource',
+              msg: 'Remove resource(s)',
               cnt: 1,
               hideCnt: true
             });
-            var scope = file.hash.replace(scopesHash + '_', '');
+            var scopes = [];
+            files.forEach(file => scopes.push(file.hash.replace(scopesHash + '_', '')));
             fm.request({
               data: {
                 cmd: 'rmscope',
-                scope : scope
+                scopes : scopes
               },
               preventDefault: true
             }).done(function() {
@@ -46,7 +54,7 @@ elFinder.prototype.commands.rmscope = function() {
                 type: 'rmscope',
                 cnt: -1
               });
-              fm.trigger('error', {error : 'error occured while trying to delete the resource'});
+              fm.trigger('error', {error : 'error occured while trying to delete the scope(s)'});
             });
           }
         },
