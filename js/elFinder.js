@@ -468,7 +468,7 @@ window.elFinder = function(node, opts) {
 			}
 			self.options.requestType = 'post';
 			self.options.customHeaders['X-Requested-With'] = 'XMLHttpRequest';
-			self.options.xhrFields['withCredentials'] = true;
+			// self.options.xhrFields['withCredentials'] = true;
 		}
 	})();
 
