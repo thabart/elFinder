@@ -128,7 +128,14 @@ elFinder.prototype.commands.userinfo = function() {
         if (user.roles && user.roles.length > 0) {
           roles = constructRemovableTiles(user.roles);
         }
-        content = content.replace('{roles}', roles);
+
+        if (user.is_localaccount) {
+          content = content.replace('{roles}', roles);
+        }
+        else {
+          content = '<table class="elfinder-info-tb"><tbody><tr><td>Not a local account</td></tr></tbody></table>';
+        }
+        
         view = view.replace('{picture}', picture);
         view = view.replace('{title}', user.name);
         view = view.replace('{content}', content);
