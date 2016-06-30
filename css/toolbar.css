@@ -111,6 +111,7 @@
 .elfinder-button-icon-rmpolicy,
 .elfinder-button-icon-rmresource,
 .elfinder-button-icon-rmscope,
+.elfinder-button-icon-rmuser,
 .elfinder-button-icon-rm        { background-position: 0 -224px; }
 .elfinder-button-icon-copy      { background-position: 0 -240px; }
 .elfinder-button-icon-cut       { background-position: 0 -256px; }
@@ -127,6 +128,7 @@
 .elfinder-button-icon-resourceinfo,
 .elfinder-button-icon-scopeinfo,
 .elfinder-button-icon-accessinfo,
+.elfinder-button-icon-userinfo,
 .elfinder-button-icon-info      { background-position: 0 -400px; }
 .elfinder-button-icon-extract   { background-position: 0 -416px; }
 .elfinder-button-icon-archive   { background-position: 0 -432px; }

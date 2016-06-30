@@ -162,6 +162,9 @@
 .elfinder-dialog-icon-rmscope,
 .elfinder-dialog-icon-scopeinfo,
 .elfinder-dialog-icon-accessinfo,
+.elfinder-dialog-icon-userinfo,
+.elfinder-dialog-icon-rmuser,
+.elfinder-dialog-icon-updateuser,
 .elfinder-dialog-icon-download    { background-position: 0 -260px; }
 .elfinder-dialog-icon-save        { background-position: 0 -295px; }
 .elfinder-dialog-icon-rename      { background-position: 0 -330px; }

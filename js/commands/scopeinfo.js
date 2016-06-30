@@ -19,7 +19,6 @@ elFinder.prototype.commands.scopeinfo = function() {
     var result = !this._disabled && sel.length == 1 && sel[0].phash === openidScopesHash ? 0 : -1;
     return result;
   };
-
   this.exec = function(hashes) {
     var file = this.files(hashes)[0],
       id = fm.namespace+'-scopeinfo-'+file.hash,
