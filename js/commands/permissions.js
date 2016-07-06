@@ -8,7 +8,7 @@ elFinder.prototype.commands.permissions = function() {
   }];
   this.tpl = {
     main     : '<div class="ui-helper-clearfix elfinder-info-title">{title}</div><table class="elfinder-info-tb">{content}</table>',
-    content  : '<div class=\'elfinder-permissions-padding\'>{clients}</div><div class=\'elfinder-permissions-padding\'>{claims}</div><div class=\'elfinder-permissions-padding\'>{permissions}</div><button class=\'save-permission\'>Save</button>'
+    content  : '<div class=\'elfinder-permissions-padding\'>{clients}</div><div>Are conditions linked ? <a href="#"><img src="{link}" class="link" data-linked="{isLinked}" /></a></div><div class=\'elfinder-permissions-padding\'>{claims}</div><div class=\'elfinder-permissions-padding\'>{permissions}</div><button class=\'save-permission\'>Save</button>'
   };
   this.getstate = function(sel) {
 		var sel = this.files(sel);
@@ -42,6 +42,13 @@ elFinder.prototype.commands.permissions = function() {
         open: function() {
           var self = this;
           fm.lockfiles({files : [file.hash]});
+          $(self).find('.link').on('click', function() {
+            var data = $(this).data('linked');
+            var isLinked = data? false : true;
+            var img = isLinked ? '/img/link.png' : '/img/link-break.png';
+            $(this).data('linked', isLinked);
+            $(this).attr('src', img);
+          });
           $(self).find('#claim-value-'+file.hash).keydown(function(e) {
   					e.stopImmediatePropagation();
           });
@@ -54,10 +61,19 @@ elFinder.prototype.commands.permissions = function() {
 
               return result;
             };
+            var getSelectedClients = function(checkboxes) {
+              var result = [];
+              checkboxes.each(function() {
+                result.push($(this).data('id'));
+              });
+
+              return result;
+            };
             var clients = $(self).find('.allowed-clients input[type=\'checkbox\']:checked');
             var permissions = $(self).find('.assigned-permissions input[type=\'checkbox\']:checked');
             var claims = $(self).find('.assigned-claims .elfinder-white-box').children('label');
-            var assignedClientIds = getSelectedValues(clients),
+            var conditionsLinked = $(self).find('.link').data('linked');
+            var assignedClientIds = getSelectedClients(clients),
               assignedPermissions = getSelectedValues(permissions),
               assignedClaims = [];
 
@@ -81,7 +97,8 @@ elFinder.prototype.commands.permissions = function() {
                 target: file.hash,
                 clients: assignedClientIds,
                 permissions: assignedPermissions,
-                claims: assignedClaims
+                claims: assignedClaims,
+                conditions_linked: conditionsLinked
               },
               preventDefault: true
             }).done(function(data) {
@@ -162,7 +179,15 @@ elFinder.prototype.commands.permissions = function() {
           clientsView = clientsView.replace('{clients}', 'no client');
         }
         else {
-          var clientContent = contructTiles(data, 'clients', 'assigned-clients');
+          var clientContent = "";
+          data['clients'].forEach(d => {
+            if (data['assigned-clients'] && data['assigned-clients'].indexOf(d.id) > -1) {
+              clientContent += "<div class='elfinder-white-box'><input type='checkbox' data-id='"+d.id+"' checked/><label>"+d.name+"</label></div>";
+            } else {
+              clientContent += "<div class='elfinder-white-box'><input type='checkbox' data-id='"+d.id+"'/><label>"+d.name+"</label></div>";
+            }
+          });
+
           clientsView = clientsView.replace('{clients}', clientContent);
         }
         // Fill-in claims
@@ -197,6 +222,8 @@ elFinder.prototype.commands.permissions = function() {
         content = content.replace('{clients}', clientsView);
         content = content.replace('{claims}', claimsView);
         content = content.replace('{permissions}', permissionsView);
+        content = content.replace('{link}', data.conditions_linked ? '/img/link.png' : '/img/link-break.png');
+        content = content.replace('{isLinked}', data.conditions_linked);
         view = view.replace('{content}', content);
         view = view.replace('{title}', title);
         var dialog = fm.dialog(view, opts);

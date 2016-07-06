@@ -9,7 +9,7 @@ elFinder.prototype.commands.clientinfo = function() {
   this.tpl = {
     main : '<div class="ui-helper-clearfix elfinder-info-title">'+
       '<img class="elfinder-clientinfo-logo" src="{logoUri}" />' +
-      '<strong>Client information (<a href="{editUrl}">Edit</a>)</strong>'+
+      '<strong>Client information (<a href="{editUrl}" target="_blank">Edit</a>)</strong>'+
       '<span class="elfinder-info-kind">{title}</span></div>{content}',
     content: '<table class="elfinder-info-tb"><tbody>'+
       '<tr><td>Identifier</td><td>{clientId}</td></tr>'+
