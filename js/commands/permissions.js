@@ -53,17 +53,11 @@ elFinder.prototype.commands.permissions = function() {
           setFocus(0, self);
           // 2. Refresh menu items event handlers
           refreshEvtHandlers(self);
-          /*
-          $(self).find('#claim-value-'+file.hash).keydown(function(e) {
-  					e.stopImmediatePropagation();
-          });
-          */
-
-          // Remove the selected rule
+          // 3. Remove the selected rule
           $(self).find('.remove-rule').on('click', function() {
             removeRule(self);
           });
-          // Add a new rule
+          // 4. Add a new rule
           $(self).find('.add-rule').on('click', function() {
             var getSelectedValues = function(checkboxes) {
               var result = [];
@@ -130,23 +124,16 @@ elFinder.prototype.commands.permissions = function() {
               $(self).elfinderdialog('close');
             }));*/
           });
-          /*
-          $(self).find('#add-permission-'+file.hash).on('click', function() {
-            var claimType = $('#claim-type-'+file.hash).val(),
-              claimValue = $('#claim-value-'+file.hash).val();
-            addClaim({
-              type: claimType,
-              value: claimValue
-            });
-          });
-          */
-          refreshEventHandler();
         }
 			},
-      constructRemovableTiles = function(data) {
+      /**
+      * Get removable claims
+      * @param {data}
+      */
+      getRemovableClaims = function(claims) {
           var content = "";
-          data.forEach(d => {
-            content += "<div class='elfinder-white-box can-be-removed'><label>"+d.type+":"+d.value+"</label><a href='#'>(Remove)</a></div>";
+          claims.forEach(claim => {
+            content += "<div class='elfinder-white-box can-be-removed'><label>"+claim.type+":"+claim.value+"</label><a href='#'>(Remove)</a></div>";
           });
           return content;
       },
@@ -160,26 +147,6 @@ elFinder.prototype.commands.permissions = function() {
           }
         });
         return content;
-      },
-      addClaim = function(claim) {
-        if ($("#assigned-claims-"+file.hash).children().length === 0) {
-          $("#assigned-claims-"+file.hash).html('');
-        }
-
-        var child = constructRemovableTiles([claim]);
-        $("#assigned-claims-"+file.hash).append(child);
-        refreshEventHandler();
-      },
-      refreshEventHandler = function() {
-        $('.can-be-removed').on('click', function(e) {
-          e.preventDefault();
-          var currentTarget = e.currentTarget;
-          if ($(currentTarget).parent().children().length === 1) {
-            $(currentTarget).parent().html('no assigned claims');
-          } else {
-            $(currentTarget).remove();
-          }
-        });
       },
       /**
       * Remove current permission rule
@@ -206,10 +173,11 @@ elFinder.prototype.commands.permissions = function() {
         details.append(content);
         // 3. Enable element
         var item = enableElement(elt, index).item;
-        // 4. Refresh the event handler
-        refreshEvtHandlers(elt);
-        // 5. Set the focus
+        // 4. Set the focus
         setFocus(index, elt);
+        // 5. Refresh the event handler
+        refreshCurrentRuleEventHandlers(elt);
+        refreshEvtHandlers(elt);
       },
       /**
       * Set focus to the element
@@ -235,6 +203,7 @@ elFinder.prototype.commands.permissions = function() {
       resetDetails = function(index, elt) {
         activeElement.detail.replaceWith(getRuleView({}));
         enableElement(elt, index);
+        refreshCurrentRuleEventHandlers();
       },
       /**
       * Refresh menu item event handlers
@@ -245,8 +214,41 @@ elFinder.prototype.commands.permissions = function() {
             var index = $(this).index();
             setFocus(index, elt);
         });
-        $(elt).find('.claim-value').keydown(function(e) {
+      },
+      /**
+      * Refresh evt handlers of current rule
+      */
+      refreshCurrentRuleEventHandlers = function() {
+        activeElement.detail.find('.claim-value').keydown(function(e) {
           e.stopImmediatePropagation();
+        });
+        activeElement.detail.find('.add-claim').on('click', function() {
+          var claimType = activeElement.detail.find('.claim-type').val(),
+            claimValue = activeElement.detail.find('.claim-value').val();
+          if (activeElement.detail.find('.assigned-claims').children().length === 0) {
+              activeElement.detail.find('.assigned-claims').html('');
+          }
+
+          var child = getRemovableClaims([{
+            type: claimType,
+            value: claimValue
+          }]);
+          activeElement.detail.find('.assigned-claims').append(child);
+          refreshRemovableClaimsEvtHandlers();
+        });
+      },
+      /**
+      * Refresh removable claims evt handlers
+      */
+      refreshRemovableClaimsEvtHandlers = function() {
+        activeElement.detail.find('.can-be-removed').on('click', function(e) {
+          e.preventDefault();
+          var currentTarget = e.currentTarget;
+          if ($(currentTarget).parent().children().length === 1) {
+            $(currentTarget).parent().html('no assigned claims');
+          } else {
+            $(currentTarget).remove();
+          }
         });
       },
       /**
@@ -300,7 +302,7 @@ elFinder.prototype.commands.permissions = function() {
           lstClaims = 'no claim';
         }
         else {
-          var claimContent = "<select>{selectOptions}</select><input type='text' class='claim-value' style='margin:0 5px 0 5px;' /><button type='button' class='add-claim'>Add</button>";
+          var claimContent = "<select class='claim-type'>{selectOptions}</select><input type='text' class='claim-value' style='margin:0 5px 0 5px;' /><button type='button' class='add-claim'>Add</button>";
           var selectOptions = "";
           information['claims'].forEach(c => selectOptions += '<option value=\''+c+'\'>'+c+'</option>');
           claimContent = claimContent.replace('{selectOptions}', selectOptions);
@@ -313,7 +315,7 @@ elFinder.prototype.commands.permissions = function() {
         if (!permissionRule['claims'] || permissionRule['claims'].length === 0) {
           lstAssignedClaims = "no assigned claims";
         } else {
-          lstAssignedClaims = constructRemovableTiles(permissionRule.claims);
+          lstAssignedClaims = getRemovableClaims(permissionRule.claims);
         }
         claimsView = claimsView.replace('{assignedClaims}', lstAssignedClaims);
         // Fill-in permissions
