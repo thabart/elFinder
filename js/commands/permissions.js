@@ -10,7 +10,7 @@ elFinder.prototype.commands.permissions = function() {
     main     : '<div class="ui-helper-clearfix elfinder-info-title">{title}</div>{content}',
     content  : '<table style="padding-top:5px;">'+
       '<tr><td style="vertical-align:top; width:90px;"><b>Rules</b><div class="permission-menu">{items}</div></td><td style="vertical-align:top;"><div class="permission-details">{details}</div></td></tr>'+
-      '<tr><td colspan="2"><button class=\'add-rule\' >Add rule</button><button class="remove-rule">Remove rule</button></td></tr></table>',
+      '<tr><td colspan="2"><button class=\'add-rule\' >Add rule</button><button class="remove-rule">Remove rule</button><button class="save">Save</button></td></tr></table>',
     edit: '<div class="permission-rule"><div class=\'elfinder-permissions-padding\'>{clients}</div><div class=\'elfinder-permissions-padding\'>{claims}</div><div class=\'elfinder-permissions-padding\'>{permissions}</div></div>'
   };
   this.getstate = function(sel) {
@@ -59,44 +59,19 @@ elFinder.prototype.commands.permissions = function() {
           });
           // 4. Add a new rule
           $(self).find('.add-rule').on('click', function() {
-            var getSelectedValues = function(checkboxes) {
-              var result = [];
-              checkboxes.each(function() {
-                result.push($(this).next().html());
-              });
-
-              return result;
-            };
-            var getSelectedClients = function(checkboxes) {
-              var result = [];
-              checkboxes.each(function() {
-                result.push($(this).data('id'));
-              });
-
-              return result;
-            };
-            var clients = activeElement.detail.find('.allowed-clients input[type=\'checkbox\']:checked');
-            var permissions = activeElement.detail.find('.assigned-permissions input[type=\'checkbox\']:checked');
-            var claims = activeElement.detail.find('.assigned-claims .elfinder-white-box').children('label');
-            var assignedClientIds = getSelectedClients(clients),
-              assignedPermissions = getSelectedValues(permissions),
-              assignedClaims = [];
-
-            claims.each(function() {
-              var concatenatedClaim = $(this).html();
-              assignedClaims.push({
-                type: concatenatedClaim.slice(0, concatenatedClaim.indexOf(':')),
-                value: concatenatedClaim.slice(concatenatedClaim.indexOf(':') + 1, concatenatedClaim.length)
-              });
-            });
-
-            var rule = {
-              clients: assignedClientIds,
-              permissions: assignedPermissions,
-              claims: assignedClaims
-            };
-
+            var rule = getPermissionRule(activeElement.detail);
             addRule(self, rule);
+          });
+          // 5. Save the authorization rule
+          $(self).find('.save').on('click', function() {
+            var rules = [];
+            $(self).find('.permission-rule').each(function(i) {
+              if (i > 0) {
+                rules.push(getPermissionRule($(this)));
+              }
+            });
+            
+            console.log(rules);
             /*
             // Ex
             fm.notify({
@@ -126,6 +101,46 @@ elFinder.prototype.commands.permissions = function() {
           });
         }
 			},
+      /**
+      * Get permission rules
+      * @param {details}
+      */
+      getPermissionRule = function(detail) {
+        var getSelectedValues = function(checkboxes) {
+          var result = [];
+          checkboxes.each(function() {
+            result.push($(this).next().html());
+          });
+
+          return result;
+        };
+        var getSelectedClients = function(checkboxes) {
+          var result = [];
+          checkboxes.each(function() {
+            result.push($(this).data('id'));
+          });
+
+          return result;
+        };
+        var clients = detail.find('.allowed-clients input[type=\'checkbox\']:checked');
+        var permissions = detail.find('.assigned-permissions input[type=\'checkbox\']:checked');
+        var claims = detail.find('.assigned-claims .elfinder-white-box').children('label');
+        var assignedClientIds = getSelectedClients(clients),
+          assignedPermissions = getSelectedValues(permissions),
+          assignedClaims = [];
+        claims.each(function() {
+          var concatenatedClaim = $(this).html();
+          assignedClaims.push({
+            type: concatenatedClaim.slice(0, concatenatedClaim.indexOf(':')),
+            value: concatenatedClaim.slice(concatenatedClaim.indexOf(':') + 1, concatenatedClaim.length)
+          });
+        });
+        return {
+          clients: assignedClientIds,
+          permissions: assignedPermissions,
+          claims: assignedClaims
+        };
+      },
       /**
       * Get removable claims
       * @param {data}
