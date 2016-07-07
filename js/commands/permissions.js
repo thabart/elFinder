@@ -8,8 +8,10 @@ elFinder.prototype.commands.permissions = function() {
   }];
   this.tpl = {
     main     : '<div class="ui-helper-clearfix elfinder-info-title">{title}</div>{content}',
-    content  : '<table style="padding-top:5px;"><tr><td style="vertical-align:top; width:90px;"><b>Rules</b><div class="permission-size menu">{items}</div></td><td style="vertical-align:top;"><div class="details">{details}</div></td></tr></table>',
-    edit: '<div class="permission-size"><div class=\'elfinder-permissions-padding\'>{clients}</div><div class=\'elfinder-permissions-padding\'>{claims}</div><div class=\'elfinder-permissions-padding\'>{permissions}</div><button class=\'add-rule\'>Add</button></div>'
+    content  : '<table style="padding-top:5px;">'+
+      '<tr><td style="vertical-align:top; width:90px;"><b>Rules</b><div class="permission-menu">{items}</div></td><td style="vertical-align:top;"><div class="permission-details">{details}</div></td></tr>'+
+      '<tr><td><button class=\'add-rule\'>Add rule</button></td></tr></table>',
+    edit: '<div class="permission-rule"><div class=\'elfinder-permissions-padding\'>{clients}</div><div class=\'elfinder-permissions-padding\'>{claims}</div><div class=\'elfinder-permissions-padding\'>{permissions}</div></div>'
   };
   this.getstate = function(sel) {
 		var sel = this.files(sel);
@@ -24,6 +26,7 @@ elFinder.prototype.commands.permissions = function() {
       edit = this.tpl.edit,
       reqs = [],
 			incwd    = (fm.cwd().hash == file.hash),
+      activeElement = {},
 			dfrd     = $.Deferred()
         .done(function(data){
           fm.exec('reload', data.added[0].hash);
@@ -46,9 +49,15 @@ elFinder.prototype.commands.permissions = function() {
         open: function() {
           var self = this;
           fm.lockfiles({files : [file.hash]});
+          // 1 Enable the "new" element
+          enableElement(self, 0);
+          // 2. Refresh menu items event handlers
+          refreshMenuItemsEvtHandler(self);
+          /*
           $(self).find('#claim-value-'+file.hash).keydown(function(e) {
   					e.stopImmediatePropagation();
           });
+          */
           $(self).find('.add-rule').on('click', function() {
             var getSelectedValues = function(checkboxes) {
               var result = [];
@@ -66,11 +75,9 @@ elFinder.prototype.commands.permissions = function() {
 
               return result;
             };
-            var clients = $(self).find('.allowed-clients input[type=\'checkbox\']:checked');
-            var permissions = $(self).find('.assigned-permissions input[type=\'checkbox\']:checked');
-            var claims = $(self).find('.assigned-claims .elfinder-white-box').children('label');
-            var menu = $(self).find('.menu');
-            var details = $(self).find('.details');
+            var clients = activeElement.detail.find('.allowed-clients input[type=\'checkbox\']:checked');
+            var permissions = activeElement.detail.find('.assigned-permissions input[type=\'checkbox\']:checked');
+            var claims = activeElement.detail.find('.assigned-claims .elfinder-white-box').children('label');
             var assignedClientIds = getSelectedClients(clients),
               assignedPermissions = getSelectedValues(permissions),
               assignedClaims = [];
@@ -88,7 +95,8 @@ elFinder.prototype.commands.permissions = function() {
               permissions: assignedPermissions,
               claims: assignedClaims
             };
-            addRule(menu, details, rule);
+
+            addRule(self, rule);
             /*
             // Ex
             fm.notify({
@@ -116,6 +124,7 @@ elFinder.prototype.commands.permissions = function() {
               $(self).elfinderdialog('close');
             }));*/
           });
+          /*
           $(self).find('#add-permission-'+file.hash).on('click', function() {
             var claimType = $('#claim-type-'+file.hash).val(),
               claimValue = $('#claim-value-'+file.hash).val();
@@ -124,6 +133,7 @@ elFinder.prototype.commands.permissions = function() {
               value: claimValue
             });
           });
+          */
           refreshEventHandler();
         }
 			},
@@ -165,15 +175,86 @@ elFinder.prototype.commands.permissions = function() {
           }
         });
       },
-      addRule = function(menu, details, permissionRule) {
-        var itemName = menu.children().length;
+      /**
+      * Add permission rule
+      * @param {elt}
+      * @param {permissionRule}
+      */
+      addRule = function(elt, permissionRule) {
+        var menu = $(elt).find('.permission-menu');
+        var details = $(elt).find('.permission-details');
+        var index = menu.children().length;
         // 1. Add menu item
-        menu.append('<div class="permission-menu-item"><a href="#" data-rule="new">Rule '+itemName+'</a></div>');
+        menu.append('<div class="permission-menu-item"><a href="#" data-rule="new">Rule '+index+'</a></div>');
         // 2. Add content
         var content = getRuleView(permissionRule);
         details.append(content);
+        // 3. Enable element
+        var item = enableElement(elt, index).item;
+        // 4. Refresh the event handler
+        refreshMenuItemsEvtHandler(elt);
+        // 5. Set the focus
+        setFocus(index, elt);
       },
+      /**
+      * Set focus to the element
+      */
+      setFocus = function(index, elt) {
+        // 1. Enable the element
+        var detail = enableElement(elt, index).detail;
+        // 2. Hide the button "add rule" & if needed reset the fields
+        if (index > 0) {
+          $(elt).find('.add-rule').hide();
+        } else {
+          $(elt).find('.add-rule').show();
+          resetDetails(index, elt);
+        }
+      },
+      /**
+      * Reset details
+      * @param {index}
+      * @param {elt}
+      */
+      resetDetails = function(index, elt) {
+        activeElement.detail.replaceWith(getRuleView({}));
+        enableElement(elt, index);
+      },
+      /**
+      * Refresh menu item event handlers
+      * @param {elt}
+      */
+      refreshMenuItemsEvtHandler = function(elt) {
+        $(elt).find('.permission-menu .permission-menu-item').on('click', function() {
+            var index = $(this).index();
+            setFocus(index, elt);
+        });
+      },
+      /**
+      * Enable an element at the specified index
+      * @param {elt}
+      * @param {index}
+      * @return return the element
+      */
+      enableElement = function(elt, index) {
+        // 1. Remove all active classes
+        $(elt).find('.permission-details .permission-rule').removeClass('permission-active');
+        $(elt).find('.permission-menu .permission-menu-item').removeClass('permission-item-active');
+        // 2. Enable element
+        var result = {
+          detail : $($(elt).find('.permission-details .permission-rule').get(index)),
+          item: $($(elt).find('.permission-menu .permission-menu-item').get(index))
+        };
+        result.detail.addClass('permission-active');
+        result.item.addClass('permission-item-active');
+        activeElement = result;
+        return result;
+      },
+      /**
+      * Get authorization rule view
+      * @param {permissionRule}
+      */
       getRuleView = function(permissionRule) {
+        var result = edit;
         var clientsView = '<label>Allowed clients</label><div class=\'allowed-clients\'>{clients}</div>';
         var claimsView = '<label>Allowed claims</label><div>{claims}</div><div class="assigned-claims">{assignedClaims}</div>';
         var permissionsView = '<label>Permissions</label><div class=\'assigned-permissions\'>{permissions}</div>';
@@ -199,7 +280,7 @@ elFinder.prototype.commands.permissions = function() {
           lstClaims = 'no claim';
         }
         else {
-          var claimContent = "<select>{selectOptions}</select><input type='text' style='margin:0 5px 0 5px;' /><button type='button'>Add</button>";
+          var claimContent = "<select>{selectOptions}</select><input type='text' style='margin:0 5px 0 5px;' /><button type='button' class='add-claim'>Add</button>";
           var selectOptions = "";
           information['claims'].forEach(c => selectOptions += '<option value=\''+c+'\'>'+c+'</option>');
           claimContent = claimContent.replace('{selectOptions}', selectOptions);
@@ -224,10 +305,10 @@ elFinder.prototype.commands.permissions = function() {
           permissionsView = permissionsView.replace('{permissions}', permissionContent);
         }
 
-        edit = edit.replace('{clients}', clientsView);
-        edit = edit.replace('{claims}', claimsView);
-        edit = edit.replace('{permissions}', permissionsView);
-        return edit;
+        result = result.replace('{clients}', clientsView);
+        result = result.replace('{claims}', claimsView);
+        result = result.replace('{permissions}', permissionsView);
+        return result;
       },
       displayView = function(data) {
         information = data;

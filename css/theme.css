@@ -63,7 +63,20 @@
 	border: 1px solid gray;
 }
 
-.permission-size {
+.permission-menu,
+.permission-rule {
 	overflow:auto;
-	height: 400px;
+	height: 350px;
+}
+
+.permission-rule {
+	display: none;
+}
+
+.permission-active {
+	display: block;
+}
+
+.permission-item-active {
+	font-weight: bold;
 }
