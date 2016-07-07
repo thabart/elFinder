@@ -10,7 +10,7 @@ elFinder.prototype.commands.permissions = function() {
     main     : '<div class="ui-helper-clearfix elfinder-info-title">{title}</div>{content}',
     content  : '<table style="padding-top:5px;">'+
       '<tr><td style="vertical-align:top; width:90px;"><b>Rules</b><div class="permission-menu">{items}</div></td><td style="vertical-align:top;"><div class="permission-details">{details}</div></td></tr>'+
-      '<tr><td><button class=\'add-rule\'>Add rule</button></td></tr></table>',
+      '<tr><td colspan="2"><button class=\'add-rule\' >Add rule</button><button class="remove-rule">Remove rule</button></td></tr></table>',
     edit: '<div class="permission-rule"><div class=\'elfinder-permissions-padding\'>{clients}</div><div class=\'elfinder-permissions-padding\'>{claims}</div><div class=\'elfinder-permissions-padding\'>{permissions}</div></div>'
   };
   this.getstate = function(sel) {
@@ -50,14 +50,20 @@ elFinder.prototype.commands.permissions = function() {
           var self = this;
           fm.lockfiles({files : [file.hash]});
           // 1 Enable the "new" element
-          enableElement(self, 0);
+          setFocus(0, self);
           // 2. Refresh menu items event handlers
-          refreshMenuItemsEvtHandler(self);
+          refreshEvtHandlers(self);
           /*
           $(self).find('#claim-value-'+file.hash).keydown(function(e) {
   					e.stopImmediatePropagation();
           });
           */
+
+          // Remove the selected rule
+          $(self).find('.remove-rule').on('click', function() {
+            removeRule(self);
+          });
+          // Add a new rule
           $(self).find('.add-rule').on('click', function() {
             var getSelectedValues = function(checkboxes) {
               var result = [];
@@ -176,6 +182,15 @@ elFinder.prototype.commands.permissions = function() {
         });
       },
       /**
+      * Remove current permission rule
+      * @param {elt}
+      */
+      removeRule = function(elt) {
+        activeElement.item.remove();
+        activeElement.detail.remove();
+        setFocus(0, elt);
+      },
+      /**
       * Add permission rule
       * @param {elt}
       * @param {permissionRule}
@@ -192,7 +207,7 @@ elFinder.prototype.commands.permissions = function() {
         // 3. Enable element
         var item = enableElement(elt, index).item;
         // 4. Refresh the event handler
-        refreshMenuItemsEvtHandler(elt);
+        refreshEvtHandlers(elt);
         // 5. Set the focus
         setFocus(index, elt);
       },
@@ -205,8 +220,10 @@ elFinder.prototype.commands.permissions = function() {
         // 2. Hide the button "add rule" & if needed reset the fields
         if (index > 0) {
           $(elt).find('.add-rule').hide();
+          $(elt).find('.remove-rule').show();
         } else {
           $(elt).find('.add-rule').show();
+          $(elt).find('.remove-rule').hide();
           resetDetails(index, elt);
         }
       },
@@ -223,10 +240,13 @@ elFinder.prototype.commands.permissions = function() {
       * Refresh menu item event handlers
       * @param {elt}
       */
-      refreshMenuItemsEvtHandler = function(elt) {
+      refreshEvtHandlers = function(elt) {
         $(elt).find('.permission-menu .permission-menu-item').on('click', function() {
             var index = $(this).index();
             setFocus(index, elt);
+        });
+        $(elt).find('.claim-value').keydown(function(e) {
+          e.stopImmediatePropagation();
         });
       },
       /**
@@ -280,7 +300,7 @@ elFinder.prototype.commands.permissions = function() {
           lstClaims = 'no claim';
         }
         else {
-          var claimContent = "<select>{selectOptions}</select><input type='text' style='margin:0 5px 0 5px;' /><button type='button' class='add-claim'>Add</button>";
+          var claimContent = "<select>{selectOptions}</select><input type='text' class='claim-value' style='margin:0 5px 0 5px;' /><button type='button' class='add-claim'>Add</button>";
           var selectOptions = "";
           information['claims'].forEach(c => selectOptions += '<option value=\''+c+'\'>'+c+'</option>');
           claimContent = claimContent.replace('{selectOptions}', selectOptions);
