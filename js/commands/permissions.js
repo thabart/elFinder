@@ -7,8 +7,9 @@ elFinder.prototype.commands.permissions = function() {
 		pattern     : 'ctrl+p'
   }];
   this.tpl = {
-    main     : '<div class="ui-helper-clearfix elfinder-info-title">{title}</div><table class="elfinder-info-tb">{content}</table>',
-    content  : '<div class=\'elfinder-permissions-padding\'>{clients}</div><div>Are conditions linked ? <a href="#"><img src="{link}" class="link" data-linked="{isLinked}" /></a></div><div class=\'elfinder-permissions-padding\'>{claims}</div><div class=\'elfinder-permissions-padding\'>{permissions}</div><button class=\'save-permission\'>Save</button>'
+    main     : '<div class="ui-helper-clearfix elfinder-info-title">{title}</div>{content}',
+    content  : '<table style="padding-top:5px;"><tr><td style="vertical-align:top; width:90px;"><b>Rules</b><div class="permission-size menu">{items}</div></td><td style="vertical-align:top;"><div class="details">{details}</div></td></tr></table>',
+    edit: '<div class="permission-size"><div class=\'elfinder-permissions-padding\'>{clients}</div><div class=\'elfinder-permissions-padding\'>{claims}</div><div class=\'elfinder-permissions-padding\'>{permissions}</div><button class=\'add-rule\'>Add</button></div>'
   };
   this.getstate = function(sel) {
 		var sel = this.files(sel);
@@ -16,10 +17,12 @@ elFinder.prototype.commands.permissions = function() {
   };
   this.exec = function(hashes) {
     var file   = this.files(hashes)[0],
+      information = null,
       id = fm.namespace+'-permissions-'+file.hash,
       view = this.tpl.main,
-      reqs = [],
       content = this.tpl.content,
+      edit = this.tpl.edit,
+      reqs = [],
 			incwd    = (fm.cwd().hash == file.hash),
 			dfrd     = $.Deferred()
         .done(function(data){
@@ -28,6 +31,7 @@ elFinder.prototype.commands.permissions = function() {
       opts    = {
         title : 'Permissions',
 				width : 'auto',
+        height: '450',
         close: function() {
           fm.unlockfiles({files : [file.hash]})
           $(this).elfinderdialog('destroy');
@@ -42,17 +46,10 @@ elFinder.prototype.commands.permissions = function() {
         open: function() {
           var self = this;
           fm.lockfiles({files : [file.hash]});
-          $(self).find('.link').on('click', function() {
-            var data = $(this).data('linked');
-            var isLinked = data? false : true;
-            var img = isLinked ? '/img/link.png' : '/img/link-break.png';
-            $(this).data('linked', isLinked);
-            $(this).attr('src', img);
-          });
           $(self).find('#claim-value-'+file.hash).keydown(function(e) {
   					e.stopImmediatePropagation();
           });
-          $(self).find('.save-permission').on('click', function() {
+          $(self).find('.add-rule').on('click', function() {
             var getSelectedValues = function(checkboxes) {
               var result = [];
               checkboxes.each(function() {
@@ -72,7 +69,8 @@ elFinder.prototype.commands.permissions = function() {
             var clients = $(self).find('.allowed-clients input[type=\'checkbox\']:checked');
             var permissions = $(self).find('.assigned-permissions input[type=\'checkbox\']:checked');
             var claims = $(self).find('.assigned-claims .elfinder-white-box').children('label');
-            var conditionsLinked = $(self).find('.link').data('linked');
+            var menu = $(self).find('.menu');
+            var details = $(self).find('.details');
             var assignedClientIds = getSelectedClients(clients),
               assignedPermissions = getSelectedValues(permissions),
               assignedClaims = [];
@@ -84,6 +82,14 @@ elFinder.prototype.commands.permissions = function() {
                 value: concatenatedClaim.slice(concatenatedClaim.indexOf(':') + 1, concatenatedClaim.length)
               });
             });
+
+            var rule = {
+              clients: assignedClientIds,
+              permissions: assignedPermissions,
+              claims: assignedClaims
+            };
+            addRule(menu, details, rule);
+            /*
             // Ex
             fm.notify({
               type: 'addpermissions',
@@ -108,7 +114,7 @@ elFinder.prototype.commands.permissions = function() {
               });
               dfrd.resolve(data);
               $(self).elfinderdialog('close');
-            }));
+            }));*/
           });
           $(self).find('#add-permission-'+file.hash).on('click', function() {
             var claimType = $('#claim-type-'+file.hash).val(),
@@ -128,10 +134,10 @@ elFinder.prototype.commands.permissions = function() {
           });
           return content;
       },
-      contructTiles = function(data, name, assignedName) {
+      contructTiles = function(data, name, assigned) {
         var content = "";
         data[name].forEach(d => {
-          if (data[assignedName] && data[assignedName].indexOf(d) > -1) {
+          if (assigned && assigned.indexOf(d) > -1) {
             content += "<div class='elfinder-white-box'><input type='checkbox' checked/><label>"+d+"</label></div>";
           } else {
             content += "<div class='elfinder-white-box'><input type='checkbox'/><label>"+d+"</label></div>";
@@ -159,11 +165,73 @@ elFinder.prototype.commands.permissions = function() {
           }
         });
       },
-      displayView = function(data) {
-        var title = 'Manage <i>\'' + file.name + '\'</i> permissions (<i>{information}</i>)';
+      addRule = function(menu, details, permissionRule) {
+        var itemName = menu.children().length;
+        // 1. Add menu item
+        menu.append('<div class="permission-menu-item"><a href="#" data-rule="new">Rule '+itemName+'</a></div>');
+        // 2. Add content
+        var content = getRuleView(permissionRule);
+        details.append(content);
+      },
+      getRuleView = function(permissionRule) {
         var clientsView = '<label>Allowed clients</label><div class=\'allowed-clients\'>{clients}</div>';
-        var claimsView = '<label>Allowed claims</label><div>{claims}</div><div id="assigned-claims-'+file.hash+'" class="assigned-claims">{assignedClaims}</div>';
+        var claimsView = '<label>Allowed claims</label><div>{claims}</div><div class="assigned-claims">{assignedClaims}</div>';
         var permissionsView = '<label>Permissions</label><div class=\'assigned-permissions\'>{permissions}</div>';
+        // Fill-in client information
+        if (!information['clients'] || information['clients'].length === 0) {
+          clientsView = clientsView.replace('{clients}', 'no client');
+        }
+        else {
+          var clientContent = "";
+          information['clients'].forEach(d => {
+            if (permissionRule['clients'] && permissionRule['clients'].indexOf(d.id) > -1) {
+              clientContent += "<div class='elfinder-white-box'><input type='checkbox' data-id='"+d.id+"' checked/><label>"+d.name+"</label></div>";
+            } else {
+              clientContent += "<div class='elfinder-white-box'><input type='checkbox' data-id='"+d.id+"'/><label>"+d.name+"</label></div>";
+            }
+          });
+          clientsView = clientsView.replace('{clients}', clientContent);
+        }
+
+        // Fill-in claims
+        var lstClaims = "";
+        if (!information['claims'] || information['claims'].length === 0) {
+          lstClaims = 'no claim';
+        }
+        else {
+          var claimContent = "<select>{selectOptions}</select><input type='text' style='margin:0 5px 0 5px;' /><button type='button'>Add</button>";
+          var selectOptions = "";
+          information['claims'].forEach(c => selectOptions += '<option value=\''+c+'\'>'+c+'</option>');
+          claimContent = claimContent.replace('{selectOptions}', selectOptions);
+          lstClaims = claimContent;
+        }
+
+        claimsView = claimsView.replace('{claims}', lstClaims);
+        // Fill-in assigned claims
+        var lstAssignedClaims = "";
+        if (!permissionRule['claims'] || permissionRule['claims'].length === 0) {
+          lstAssignedClaims = "no assigned claims";
+        } else {
+          lstAssignedClaims = constructRemovableTiles(permissionRule.claims);
+        }
+        claimsView = claimsView.replace('{assignedClaims}', lstAssignedClaims);
+        // Fill-in permissions
+        if (!information['permissions'] || information['permissions'].length === 0) {
+          permissionsView = permissionsView.replace('{permissions}', 'no permission');
+        }
+        else {
+          var permissionContent = contructTiles(information, 'permissions', permissionRule['permissions']);
+          permissionsView = permissionsView.replace('{permissions}', permissionContent);
+        }
+
+        edit = edit.replace('{clients}', clientsView);
+        edit = edit.replace('{claims}', claimsView);
+        edit = edit.replace('{permissions}', permissionsView);
+        return edit;
+      },
+      displayView = function(data) {
+        information = data;
+        var title = 'Manage <i>\'' + file.name + '\'</i> permissions (<i>{information}</i>)';
         if (!data.hasOwnProperty('is_owner')) {
           title = title.replace('{information}', 'no permission');
         } else {
@@ -174,56 +242,9 @@ elFinder.prototype.commands.permissions = function() {
           }
         }
 
-        // Fill-in client information
-        if (!data['clients'] || data['clients'].length === 0) {
-          clientsView = clientsView.replace('{clients}', 'no client');
-        }
-        else {
-          var clientContent = "";
-          data['clients'].forEach(d => {
-            if (data['assigned-clients'] && data['assigned-clients'].indexOf(d.id) > -1) {
-              clientContent += "<div class='elfinder-white-box'><input type='checkbox' data-id='"+d.id+"' checked/><label>"+d.name+"</label></div>";
-            } else {
-              clientContent += "<div class='elfinder-white-box'><input type='checkbox' data-id='"+d.id+"'/><label>"+d.name+"</label></div>";
-            }
-          });
-
-          clientsView = clientsView.replace('{clients}', clientContent);
-        }
-        // Fill-in claims
-        var lstClaims = "";
-        if (!data['claims'] || data['claims'].length === 0) {
-          lstClaims = 'no claim';
-        }
-        else {
-          var claimContent = "<select id='claim-type-"+file.hash+"'>{selectOptions}</select><input type='text' style='margin:0 5px 0 5px;' id='claim-value-"+file.hash+"' /><button type='button' id='add-permission-"+file.hash+"'>Add</button>";
-          var selectOptions = "";
-          data['claims'].forEach(c => selectOptions += '<option value=\''+c+'\'>'+c+'</option>');
-          claimContent = claimContent.replace('{selectOptions}', selectOptions);
-          lstClaims = claimContent;
-        }
-        claimsView = claimsView.replace('{claims}', lstClaims);
-        // Fill-in assigned claims
-        var lstAssignedClaims = "";
-        if (!data['assigned-claims'] || data['assigned-claims'].length === 0) {
-          lstAssignedClaims = "no assigned claims";
-        } else {
-          lstAssignedClaims = constructRemovableTiles(data['assigned-claims']);
-        }
-        claimsView = claimsView.replace('{assignedClaims}', lstAssignedClaims);
-        // Fill-in permissions
-        if (!data['permissions'] || data['permissions'].length === 0) {
-          permissionsView = permissionsView.replace('{permissions}', 'no permission');
-        }
-        else {
-          var permissionContent = contructTiles(data, 'permissions', 'assigned-permissions');
-          permissionsView = permissionsView.replace('{permissions}', permissionContent);
-        }
-        content = content.replace('{clients}', clientsView);
-        content = content.replace('{claims}', claimsView);
-        content = content.replace('{permissions}', permissionsView);
-        content = content.replace('{link}', data.conditions_linked ? '/img/link.png' : '/img/link-break.png');
-        content = content.replace('{isLinked}', data.conditions_linked);
+        var edit = getRuleView({});
+        content = content.replace('{items}', '<div class="permission-menu-item"><a href="#" data-rule="new">New</a></div>');
+        content = content.replace('{details}', edit);
         view = view.replace('{content}', content);
         view = view.replace('{title}', title);
         var dialog = fm.dialog(view, opts);
