@@ -161,10 +161,9 @@ task('prebuild', function(){
 });
 
 desc('build elFinder');
-task({'elfinder': ['prebuild', 'css/elfinder.min.css', 'js/elfinder.min.js', 'misc']}, function(){
+task({'elfinder': ['prebuild', 'css/elfinder.min.css', 'misc']}, function(){
 	console.log('elFinder build done');
 });
-
 // CSS
 desc('concat elfinder.full.css');
 file({'css/elfinder.full.css': files['elfinder.full.css']}, function(){
@@ -204,7 +203,8 @@ file({'js/elfinder.full.js': files['elfinder.full.js']}, function(){
 	fs.writeFileSync(this.name, buildComment() + data);
 });
 
-desc('uglify elfinder.min.js');
+// desc('uglify elfinder.min.js');
+/*
 file({'js/elfinder.min.js': ['js/elfinder.full.js']}, function () {
 	console.log('uglify elfinder.min.js');
 	var result;
@@ -219,7 +219,7 @@ file({'js/elfinder.min.js': ['js/elfinder.full.js']}, function () {
 		result = ugjs.minify('js/elfinder.full.js').code;
 	}
 	fs.writeFileSync(this.name, buildComment() + result);
-});
+});*/
 
 // IMG + SOUNDS + I18N + PHP
 desc('copy misc files');

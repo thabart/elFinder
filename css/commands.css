@@ -359,3 +359,27 @@ div.elfinder-cwd-wrapper-list tr.ui-state-default td span.ui-icon {
 .elfinder-help-debug dd span {
   /*font-size: 1.2em;*/
 }
+
+.permission-menu-item {
+	background-color:rgba(128, 128, 128, 0.32);
+	padding:2px 15px 2px 15px;
+	border: 1px solid gray;
+}
+
+.permission-menu,
+.permission-rule {
+	overflow:auto;
+	height: 350px;
+}
+
+.permission-rule {
+	display: none;
+}
+
+.permission-active {
+	display: block;
+}
+
+.permission-item-active {
+	font-weight: bold;
+}

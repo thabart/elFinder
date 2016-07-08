@@ -56,27 +56,3 @@
 /* contextmenu */
 .elfinder-contextmenu .ui-state-hover { background: #3875d7; color:#fff; }
 .elfinder-contextmenu .ui-state-hover .elfinder-contextmenu-arrow { background-image:url('../img/arrows-active.png'); }
-
-.permission-menu-item {
-	background-color:rgba(128, 128, 128, 0.32);
-	padding:2px 15px 2px 15px;
-	border: 1px solid gray;
-}
-
-.permission-menu,
-.permission-rule {
-	overflow:auto;
-	height: 350px;
-}
-
-.permission-rule {
-	display: none;
-}
-
-.permission-active {
-	display: block;
-}
-
-.permission-item-active {
-	font-weight: bold;
-}
