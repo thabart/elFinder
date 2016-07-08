@@ -49,6 +49,12 @@ elFinder.prototype.commands.permissions = function() {
         open: function() {
           var self = this;
           fm.lockfiles({files : [file.hash]});
+          // 0. Add the other tabs
+          if(information.rules) {
+            information.rules.forEach(function(rule) {
+              addRule(self, rule);
+            });
+          }
           // 1 Enable the "new" element
           setFocus(0, self);
           // 2. Refresh menu items event handlers
@@ -70,24 +76,18 @@ elFinder.prototype.commands.permissions = function() {
                 rules.push(getPermissionRule($(this)));
               }
             });
-            
-            console.log(rules);
-            /*
-            // Ex
+
             fm.notify({
               type: 'addpermissions',
               msg: 'Add permissions',
               cnt: 1,
               hideCnt: true
             });
-
             reqs.push(fm.request({
-              data: { cmd: 'mkperm',
+              data: {
+                cmd: 'mkperm',
                 target: file.hash,
-                clients: assignedClientIds,
-                permissions: assignedPermissions,
-                claims: assignedClaims,
-                conditions_linked: conditionsLinked
+                rules: rules
               },
               preventDefault: true
             }).done(function(data) {
@@ -97,7 +97,13 @@ elFinder.prototype.commands.permissions = function() {
               });
               dfrd.resolve(data);
               $(self).elfinderdialog('close');
-            }));*/
+            }).fail(function() {
+              fm.trigger('error', {error : 'the permission cannot be saved'});
+              fm.notify({
+                type: 'addpermissions',
+                cnt: -1
+              });
+            }));
           });
         }
 			},
@@ -125,6 +131,7 @@ elFinder.prototype.commands.permissions = function() {
         var clients = detail.find('.allowed-clients input[type=\'checkbox\']:checked');
         var permissions = detail.find('.assigned-permissions input[type=\'checkbox\']:checked');
         var claims = detail.find('.assigned-claims .elfinder-white-box').children('label');
+        var id = detail.find('input[type=\'hidden\']').val();
         var assignedClientIds = getSelectedClients(clients),
           assignedPermissions = getSelectedValues(permissions),
           assignedClaims = [];
@@ -135,11 +142,16 @@ elFinder.prototype.commands.permissions = function() {
             value: concatenatedClaim.slice(concatenatedClaim.indexOf(':') + 1, concatenatedClaim.length)
           });
         });
-        return {
+        var result = {
           clients: assignedClientIds,
           permissions: assignedPermissions,
           claims: assignedClaims
         };
+        if (id) {
+          result.id = id;
+        }
+
+        return result;
       },
       /**
       * Get removable claims
@@ -237,6 +249,7 @@ elFinder.prototype.commands.permissions = function() {
         activeElement.detail.find('.claim-value').keydown(function(e) {
           e.stopImmediatePropagation();
         });
+        refreshRemovableClaimsEvtHandlers();
         activeElement.detail.find('.add-claim').on('click', function() {
           var claimType = activeElement.detail.find('.claim-type').val(),
             claimValue = activeElement.detail.find('.claim-value').val();
@@ -295,6 +308,10 @@ elFinder.prototype.commands.permissions = function() {
         var clientsView = '<label>Allowed clients</label><div class=\'allowed-clients\'>{clients}</div>';
         var claimsView = '<label>Allowed claims</label><div>{claims}</div><div class="assigned-claims">{assignedClaims}</div>';
         var permissionsView = '<label>Permissions</label><div class=\'assigned-permissions\'>{permissions}</div>';
+        if (permissionRule.id) {
+          clientsView += '<input type="hidden" name="id" value="'+permissionRule.id+'"/>';
+        }
+
         // Fill-in client information
         if (!information['clients'] || information['clients'].length === 0) {
           clientsView = clientsView.replace('{clients}', 'no client');
@@ -394,6 +411,12 @@ elFinder.prototype.commands.permissions = function() {
       preventDefault: true
     }).done(function(data) {
       displayView(data);
+      fm.notify({
+        type: 'permissions',
+        cnt: -1
+      });
+    }).fail(function() {
+      fm.trigger('error', {error : 'the permission cannot be retrieved'});
       fm.notify({
         type: 'permissions',
         cnt: -1

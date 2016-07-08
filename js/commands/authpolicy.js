@@ -12,9 +12,7 @@ elFinder.prototype.commands.authpolicy = function() {
       '<strong>Authorization policy (<a href="{editUrl}">Edit</a>)</strong></div>{content}',
     content : '<table class="elfinder-info-tb" style="table-layout:fixed;"><tbody>' +
       '<tr><td>Resource identifiers</td><td>{resources}</td></tr>' +
-      '<tr><td>Clients</td><td>{clients}</td></tr>' +
-      '<tr><td>Claims</td><td>{claims}</td></tr>' +
-      '<tr><td>Permissions</td><td>{permissions}</td></tr>' +
+      '<tr><td>Number of rules</td><td>{rules}</td></tr>' +
       '</tbody></table>'
   };
   this.getstate = function(sel) {
@@ -45,32 +43,14 @@ elFinder.prototype.commands.authpolicy = function() {
         }
       },
       displayAuthPolicy = function(data) {
-        var setValue = function(defaultValue, arr) {
-          if (arr && arr.length > 0) {
-            return arr.join(',');
-          }
-
-          return defaultValue;
-        };
-        var constructClaimTiles = function(claims) {
-          if (!claims || claims.length === 0) {
-            return 'no claim';
-          }
-          var html = '';
-          claims.forEach(c => {
-            html += "<div class='elfinder-white-box'>"+c.type+":"+c.value+"</div>";
-          });
-          return html;
-        };
-        var clients = setValue('no client', data.allowed_clients),
-          claims = constructClaimTiles(data.claims),
-          resources = data.resource_set_ids.join(','),
-          permissions = setValue('no permission', data.scopes);
+        var resources = data.resource_set_ids.join(',');
+        var rules = "no rule";
+        if (data.rules && data.rules.length > 0) {
+          rules = data.rules.length;
+        }
 
         content = content.replace('{resources}', resources);
-        content = content.replace('{clients}', clients);
-        content = content.replace('{claims}', claims);
-        content = content.replace('{permissions}', permissions);
+        content = content.replace('{rules}', rules);
         view = view.replace('{editUrl}', options.editUrl.replace('{authpolicy_id}', data.id));
         view = view.replace('{content}', content);
         dialog = fm.dialog(view, opts);
