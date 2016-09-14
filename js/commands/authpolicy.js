@@ -9,10 +9,12 @@ elFinder.prototype.commands.authpolicy = function() {
   this.tpl = {
     main : '<div class="ui-helper-clearfix elfinder-info-title">' +
       '<img class="elfinder-clientinfo-logo" src="img/policy.png" />' +
-      '<strong>Authorization policy (<a href="{editUrl}">Edit</a>)</strong></div>{content}',
-    content : '<table class="elfinder-info-tb" style="table-layout:fixed;"><tbody>' +
-      '<tr><td>Resource identifiers</td><td>{resources}</td></tr>' +
-      '<tr><td>Number of rules</td><td>{rules}</td></tr>' +
+      '<strong>Authorization policy</strong></div>{content}',
+    content : '<table class="elfinder-info-tb" style="table-layout:fixed;" id="authorization-policy"><tbody>' +
+      '<tr><td>Resources</td><td></td></tr>' +
+      '<tr><td colspan="2"><ul class="list">{resources}</ul></td></tr>' +
+      '<tr><td>Rules</td></tr>' +
+      '<tr><td colspan="2"><ul class="list">{rules}</ul></td></tr>' +
       '</tbody></table>'
   };
   this.getstate = function(sel) {
@@ -42,16 +44,44 @@ elFinder.prototype.commands.authpolicy = function() {
           });
         }
       },
-      displayAuthPolicy = function(data) {
-        var resources = data.resource_set_ids.join(',');
-        var rules = "no rule";
-        if (data.rules && data.rules.length > 0) {
-          rules = data.rules.length;
+      constructResources = function(data) {
+        var content = "";
+        if (data && data.length > 0) {
+          data.forEach(d => {
+            content += "<li class='elfinder-white-box'><label><a href='#elf_"+d.hash+"' target='_blank'>"+d.name+"</a></label></li>";
+          });
+        }
+        else {
+          content = "no resource"
         }
 
-        content = content.replace('{resources}', resources);
-        content = content.replace('{rules}', rules);
-        view = view.replace('{editUrl}', options.editUrl.replace('{authpolicy_id}', data.id));
+        return content;
+      },
+      constructRules = function(rules) {
+        var content = "";
+        if (rules && rules.length > 0) {
+          rules.forEach(rule => {
+            var clients = rule.clients && rule.clients.length > 0 ? rule.clients.join(',') : "no client";
+            var claims = rule.claims && rule.claims.length > 0 ? $.map(rule.claims, function(c) {
+              return c.type + ":"+c.value
+            }).join(','): "no claim";
+            var permissions = rule.scopes && rule.scopes.length > 0 ? rule.scopes.join(',') : "no permission";
+            content += "<li class='elfinder-white-box'><table><tbody>"+
+            "<tr><td>Clients</td><td>"+clients+"</td></tr>"+
+            "<tr><td>Claims</td><td>"+claims+"</td></tr>"+
+            "<tr><td>Permissions</td><td>"+permissions+"</td></tr>"+
+            "</tbody></table></li>";
+          });
+        }
+        else {
+          content = "no rule"
+        }
+
+        return content;
+      },
+      displayAuthPolicy = function(data) {
+        content = content.replace('{resources}', constructResources(data.resources));
+        content = content.replace('{rules}', constructRules(data.rules));
         view = view.replace('{content}', content);
         dialog = fm.dialog(view, opts);
         dialog.addClass('dialog-size');

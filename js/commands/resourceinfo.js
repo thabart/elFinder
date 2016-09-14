@@ -12,7 +12,7 @@ elFinder.prototype.commands.resourceinfo = function() {
       '<tr><td>Scopes</td><td><input type="text" id="scope-value" /><button id="add-scope">Add</button></td></tr>'+
       '<tr><td colspan="2"><ul class="list" id="scope-list">{scopes}</ul></td></tr>'+
       '<tr><td>Parents</td></tr>'+
-      '<tr><td colspan="2"><ul>{policies}</ul></td></tr>'+
+      '<tr><td colspan="2"><ul class="list">{policies}</ul></td></tr>'+
       '<tr><td><button id="update">Update</button></td></tr>' +
       '</tbody></table>'
   };
@@ -129,9 +129,9 @@ elFinder.prototype.commands.resourceinfo = function() {
         var content = "";
         if (data && data.length > 0) {
           data.forEach(d => {
-            content += "<li class='elfinder-white-box s'><label><a href='#elf_"+d.hash+"' target='_blank'>"+d.name+"</a></label>";
+            content += "<li class='elfinder-white-box'><label><a href='#elf_"+d.hash+"' target='_blank'>"+d.name+"</a></label>";
             if (d.hasAuthorizationPolicy) {
-              content += "(contains authorization policy)"
+              content += " (contains authorization policy)"
             }
 
             content += "</li>";
