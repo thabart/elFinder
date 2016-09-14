@@ -180,6 +180,7 @@ if (elFinder && elFinder.prototype && typeof(elFinder.prototype.i18) == 'object'
 			'ntfauthpolicy': 'Open authorization policy',
 			'ntfaddpermissions': 'Add permissions',
 			'ntfupdateuser': 'Update user',
+			'ntfupdateresource' : 'Update resource',
 			'ntfrmpolicy': 'Remove authorization policy',
 			'ntfrmuser': 'Remove resource owner',
 			'ntfuserinfo' : 'Resource owner info',

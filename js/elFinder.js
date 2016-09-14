@@ -3797,7 +3797,8 @@ elFinder.prototype = {
 				}
 
 				xhr.open('POST', self.uploadURL, true);
-
+				xhr.withCredentials = false;
+				
 				// set request headers
 				if (fm.customHeaders) {
 					$.each(fm.customHeaders, function(key) {

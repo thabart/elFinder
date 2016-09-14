@@ -146,10 +146,10 @@
 	width: 10px;
 	height: 10px;
 }
-.elfinder-dialog .elfinder-dialog-resize .ui-resizable-se { 
-	background:transparent; 
-	bottom:0; 
-	right:0; 
+.elfinder-dialog .elfinder-dialog-resize .ui-resizable-se {
+	background:transparent;
+	bottom:0;
+	right:0;
 	margin-right:-7px;
 	margin-bottom:-7px;
 }
@@ -270,9 +270,9 @@ div.elfinder-cwd-wrapper-list tr.ui-state-default td span.ui-icon {
 
 .elfinder-help .ui-priority-primary { margin-bottom:7px;}
 
-.elfinder-help-team { 
-	clear: both; 
-	text-align:right; 
+.elfinder-help-team {
+	clear: both;
+	text-align:right;
 	border-bottom:1px solid #ccc;
 	margin:.5em 0;
 	font-size:.9em;
@@ -382,4 +382,18 @@ div.elfinder-cwd-wrapper-list tr.ui-state-default td span.ui-icon {
 
 .permission-item-active {
 	font-weight: bold;
+}
+
+#scopes-resource td {
+	text-align: left;
+}
+
+.list {
+	display: flex;
+	flex-flow: row wrap;
+	width: 300px;
+}
+
+.list li {
+	flex: 1 1 30%;
 }
