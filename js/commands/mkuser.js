@@ -20,20 +20,79 @@ elFinder.prototype.commands.mkuser = function() {
   };
   this.exec = function(hashes) {
     var file = this.files(hashes)[0],
-      dialog,
+      id = fm.namespace+'-addro-'+file.hash,
+      dialog = fm.getUI().find('#'+id),
       view = this.tpl.main,
       content = this.tpl.content,
+      reqs = [],
+			dfrd = $.Deferred()
+        .done(function(data){
+          fm.exec('reload', file.hash);
+        }),
       opts = {
         title : 'Create client',
         width: 'auto',
+        close: function() {
+          $(this).elfinderdialog('destroy');
+          $.each(reqs, function(i, req) {
+            var xhr = (req && req.xhr)? req.xhr : null;
+            if (xhr && xhr.state() == 'pending') {
+              xhr.quiet = true;
+              xhr.abort();
+            }
+          });
+        },
         open: function() {
-          
+          var self = this;
+          $(self).find("input[name='username']").focus();
+          // Ignore delete button
+          $(self).find("input").keydown(function(e) {
+            e.stopImmediatePropagation();
+          });
+          $(self).find(".create-ro").on('click', function() {
+            var request = {
+              sub: $(self).find("input[name='username']").val(),
+              password: $(self).find("input[name='password']").val(),
+              cmd: 'mkuser',
+              target: file.hash
+            };
+
+            fm.notify({
+              type: 'mkuser',
+              msg: 'Add user',
+              cnt: 1,
+              hideCnt: true
+            });
+            reqs.push(fm.request({
+              data: request,
+              preventDefault: true
+            }).done(function(data) {
+              fm.notify({
+                type: 'mkuser',
+                cnt: -1
+              });
+              dfrd.resolve(data);
+              $(self).elfinderdialog('close');
+            }).fail(function() {
+              fm.trigger('error', {error : 'the user cannot be saved'});
+              fm.notify({
+                type: 'mkuser',
+                cnt: -1
+              });
+            }));
+          });
         }
       },
       displayCreateModalWindow = function() {
         view = view.replace('{content}', content);
         dialog = fm.dialog(view, opts);
       };
+
+    if (this.getstate([file.hash]) < 0) {
+      return;
+    }
+
+    displayCreateModalWindow();
     /*
     var file = this.files(hashes)[0],
       id = fm.namespace+'-addclient-'+file.hash,
@@ -103,7 +162,5 @@ elFinder.prototype.commands.mkuser = function() {
     if (this.getstate([file.hash]) < 0) {
       return;
     }*/
-
-    displayCreateModalWindow();
   }
 };

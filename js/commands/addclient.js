@@ -34,6 +34,7 @@ elFinder.prototype.commands.addclient = function() {
         width: 'auto',
         open: function() {
           var self = this;
+          $(self).find('input[name="redirect_uris"]').focus();
           $(self).find('input[name="redirect_uris"]').keydown(function(e) {
             e.stopImmediatePropagation();
           });
