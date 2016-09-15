@@ -148,7 +148,8 @@
 .elfinder-button-icon-accept    { background-position: 0 -736px; }
 .elfinder-button-icon-opendir   { background-position: 0  -32px; }
 .elfinder-button-icon-menu      { background-position: 0 -752px; }
-.elfinder-button-icon-addclient { background-position: 0 -48px; }
+.elfinder-button-icon-addclient,
+.elfinder-button-icon-mkuser { background-position: 0 -48px; }
 .elfinder-button-icon-permissions { background-position: 0 -64px; }
 
 /* button with dropdown menu*/

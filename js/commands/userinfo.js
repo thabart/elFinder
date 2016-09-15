@@ -10,7 +10,7 @@ elFinder.prototype.commands.userinfo = function() {
       '<span class="elfinder-info-kind">{title}</span></div>{content}',
     content: '<table class="elfinder-info-tb"><tbody>'+
       '<tr><td>Add role</td><td><input type="text" class="role" /><button class="add-role">Add</button></td></tr>'+
-      '<tr><td>Roles</td><td class="assigned-roles" style="max-width:500px;">{roles}</td></tr>'+
+      '<tr><td>Roles</td><td style="width:300px;"><ul class="assigned-roles list">{roles}</ul></td></tr>'+
       '<tr><td><button class="update">Update</button></td></tr>' +
       '</tbody></table>'
   };
@@ -114,7 +114,7 @@ elFinder.prototype.commands.userinfo = function() {
       constructRemovableTiles = function(data) {
           var content = "";
           data.forEach(d => {
-            content += "<div class='elfinder-white-box can-be-removed'><label>"+d+"</label><a href='#'>(Remove)</a></div>";
+            content += "<li class='elfinder-white-box can-be-removed'><label>"+d+"</label><a href='#'>(Remove)</a></li>";
           });
           return content;
       },
@@ -135,7 +135,7 @@ elFinder.prototype.commands.userinfo = function() {
         else {
           content = '<table class="elfinder-info-tb"><tbody><tr><td>Not a local account</td></tr></tbody></table>';
         }
-        
+
         view = view.replace('{picture}', picture);
         view = view.replace('{title}', user.name);
         view = view.replace('{content}', content);

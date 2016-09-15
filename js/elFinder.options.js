@@ -138,7 +138,7 @@ elFinder.prototype._options = {
 		'cut', 'paste', 'search', 'info', 'view', 'help',
 		'resize', 'sort', 'places', 'chmod', 'permissions',
 		'clientinfo', 'authpolicy', 'addclient', 'removeclient', 'rmresource', 'resourceinfo', 'rmpolicy',
-		'rmscope', 'scopeinfo', 'accessinfo', 'rmuser', 'userinfo'
+		'rmscope', 'scopeinfo', 'accessinfo', 'rmuser', 'userinfo', 'mkuser'
 	],
 
 	/**
