@@ -168,6 +168,9 @@ elFinder.prototype._options = {
 		clientinfo: {
 			editUrl: 'http://localhost/clients/{client_id}'
 		},
+		userinfo: {
+			editUrl: 'http://localhost/userinfo/{subject}'
+		},
 		// "getfile" command options.
 		getfile : {
 			onlyURL  : false,

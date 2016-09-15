@@ -6,7 +6,7 @@ elFinder.prototype.commands.userinfo = function() {
   this.tpl = {
     main : '<div class="ui-helper-clearfix elfinder-info-title">'+
       '<img class="elfinder-clientinfo-logo" src="{picture}" />' +
-      '<strong>Resource owner</strong>'+
+      '<strong>Resource owner ( <a href="{editUrl}" target="_blank">Details</a> )</strong> '+
       '<span class="elfinder-info-kind">{title}</span></div>{content}',
     content: '<table class="elfinder-info-tb"><tbody>'+
       '<tr><td>Add role</td><td><input type="text" class="role" /><button class="add-role">Add</button></td></tr>'+
@@ -139,6 +139,7 @@ elFinder.prototype.commands.userinfo = function() {
         view = view.replace('{picture}', picture);
         view = view.replace('{title}', user.name);
         view = view.replace('{content}', content);
+        view = view.replace('{editUrl}', options.editUrl.replace('{subject}', user.name));
         dialog = fm.dialog(view, opts);
         dialog.attr('id', id);
       };
