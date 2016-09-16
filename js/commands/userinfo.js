@@ -22,6 +22,7 @@ elFinder.prototype.commands.userinfo = function() {
   this.exec = function(hashes) {
     var file = this.files(hashes)[0],
       id = fm.namespace+'-userinfo-'+file.hash,
+      resourceowner = {},
       reqs = [],
       options = this.options,
       dialog = fm.getUI().find('#'+id),
@@ -59,6 +60,7 @@ elFinder.prototype.commands.userinfo = function() {
             roles.each(function() {
               roleLst.push($(this).html());
             });
+            resourceowner.roles = roleLst;
 
             fm.notify({
               type: 'updateuser',
@@ -67,9 +69,9 @@ elFinder.prototype.commands.userinfo = function() {
               hideCnt: true
             });
             reqs.push(fm.request({
-              data: { cmd: 'updatero',
-                id: file.hash.replace(resourceOwnersHash + '_', ''),
-                roles: roleLst
+              data: {
+                cmd: 'updatero',
+                user: resourceowner
               },
               preventDefault: true
             }).done(function() {
@@ -139,8 +141,9 @@ elFinder.prototype.commands.userinfo = function() {
         view = view.replace('{picture}', picture);
         view = view.replace('{title}', user.name);
         view = view.replace('{content}', content);
-        view = view.replace('{editUrl}', options.editUrl.replace('{subject}', user.name));
+        view = view.replace('{editUrl}', options.editUrl.replace('{user_id}', user.id));
         dialog = fm.dialog(view, opts);
+        resourceowner = user;
         dialog.attr('id', id);
       };
 
