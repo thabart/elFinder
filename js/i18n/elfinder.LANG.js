@@ -197,6 +197,7 @@ if (elFinder && elFinder.prototype && typeof(elFinder.prototype.i18) == 'object'
 			'ntfaddclient': 'Add client',
 			'ntfmkuser', 'Add resource owner',
 			'ntfmkscope': 'Add scope',
+			'ntfupdatescope': 'Update scope',
 			'ntfreload'   : 'Reload folder content',
 			'ntfmkdir'    : 'Creating directory',
 			'ntfmkfile'   : 'Creating files',
