@@ -30,7 +30,7 @@ elFinder.prototype.commands.mkuser = function() {
           fm.exec('reload', file.hash);
         }),
       opts = {
-        title : 'Create client',
+        title : 'Create user',
         width: 'auto',
         close: function() {
           $(this).elfinderdialog('destroy');
