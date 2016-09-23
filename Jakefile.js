@@ -161,7 +161,7 @@ task('prebuild', function(){
 });
 
 desc('build elFinder');
-task({'elfinder': ['prebuild', 'css/elfinder.min.css', 'misc']}, function(){
+task({'elfinder': ['prebuild', 'css/elfinder.min.css', 'misc', 'js/elfinder.full.js']}, function(){
 	console.log('elFinder build done');
 });
 // CSS
