@@ -144,7 +144,7 @@ elFinder.prototype.commands.permissions = function() {
         });
         var result = {
           clients: assignedClientIds,
-          permissions: assignedPermissions,
+          scopes: assignedPermissions,
           claims: assignedClaims
         };
         if (id) {
@@ -164,6 +164,13 @@ elFinder.prototype.commands.permissions = function() {
           });
           return content;
       },
+      /**
+      * Construct tiles
+      * @param {data}
+      * @param {name}
+      * @param {assigned}
+      *
+      */
       contructTiles = function(data, name, assigned) {
         var content = "";
         data[name].forEach(d => {
@@ -208,6 +215,8 @@ elFinder.prototype.commands.permissions = function() {
       },
       /**
       * Set focus to the element
+      * @param {index}
+      * @param {elt}
       */
       setFocus = function(index, elt) {
         // 1. Enable the element
@@ -355,7 +364,7 @@ elFinder.prototype.commands.permissions = function() {
           permissionsView = permissionsView.replace('{permissions}', 'no permission');
         }
         else {
-          var permissionContent = contructTiles(information, 'permissions', permissionRule['permissions']);
+          var permissionContent = contructTiles(information, 'permissions', permissionRule['scopes']);
           permissionsView = permissionsView.replace('{permissions}', permissionContent);
         }
 
@@ -364,6 +373,10 @@ elFinder.prototype.commands.permissions = function() {
         result = result.replace('{permissions}', permissionsView);
         return result;
       },
+      /**
+      * Display the view
+      * @param {data}
+      */
       displayView = function(data) {
         information = data;
         var title = 'Manage <i>\'' + file.name + '\'</i> permissions (<i>{information}</i>)';
