@@ -174,6 +174,9 @@ elFinder.prototype._options = {
 		resourceinfo: {
 			resourceUrl: '/#{hash}'
 		},
+    authpolicy: {
+    	resourceUrl: '/#{hash}'
+    },
 		// "getfile" command options.
 		getfile : {
 			onlyURL  : false,

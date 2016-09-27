@@ -48,7 +48,7 @@ elFinder.prototype.commands.authpolicy = function() {
         var content = "";
         if (data && data.length > 0) {
           data.forEach(d => {
-            content += "<li class='elfinder-white-box'><label><a href='#elf_"+d.hash+"' target='_blank'>"+d.name+"</a></label></li>";
+            content += "<li class='elfinder-white-box'><label><a href='"+options.resourceUrl.replace('{hash}', 'elf_'+d.hash)+"' target='_blank'>"+d.name+"</a></label></li>";
           });
         }
         else {
