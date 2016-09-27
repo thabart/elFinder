@@ -171,6 +171,9 @@ elFinder.prototype._options = {
 		userinfo: {
 			editUrl: 'http://localhost/userinfo/{user_id}'
 		},
+		resourceinfo: {
+			resourceUrl: '/#{hash}'
+		},
 		// "getfile" command options.
 		getfile : {
 			onlyURL  : false,

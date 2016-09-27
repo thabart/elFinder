@@ -159,7 +159,7 @@ elFinder.prototype.commands.resourceinfo = function() {
         view = view.replace('{title}', data.name);
         view = view.replace('{content}', content);
         if (data.path) {
-          view = view.replace('{url}', '(<a href="'+data.uri+'" target="_blank">'+data.path+'</a>)');
+          view = view.replace('{url}', '(<a href="'+options.resourceUrl.replace('{hash}', data.uri)+'" target="_blank">'+data.path+'</a>)');
         } else {
           view = view.replace('{url}', '');
         }
