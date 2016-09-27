@@ -53,13 +53,22 @@ elFinder.prototype.commands.addclient = function() {
                 redirect_uris: redirectUris
               },
               preventDefault: true
-            }).done(function() {
+            }).done(function(newClient) {
               fm.notify({
                 type: 'addclient',
                 cnt: -1
               });
               dfrd.resolve();
               $(self).elfinderdialog('close');
+              fm.dialog('<p style="color: green;">Your client has been created.</p><p>Don\'t forget to register the client secret : <b>'+newClient.client_secret+'</b></p>', {
+          				cssClass  : 'elfinder-dialog-error',
+          				title     : 'Result',
+          				resizable : false,
+          				destroyOnClose : true,
+          				buttons   : {
+                    Close: function() { $(this).elfinderdialog('close'); }
+                  }
+          		});
             }).fail(function() {
               fm.notify({
                 type: 'addclient',
