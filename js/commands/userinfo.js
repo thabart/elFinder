@@ -56,11 +56,26 @@ elFinder.prototype.commands.userinfo = function() {
           });
           $(self).find(".update").on("click", function() {
             var roles = $(self).find('.elfinder-white-box').children('label');
-            var roleLst = [];
-            roles.each(function() {
-              roleLst.push($(this).html());
+            var indexes = [];
+            resourceowner.claims.forEach(function(c, index) {
+              if (c.key === 'role')
+              {
+                indexes.push(index);
+              }
             });
-            resourceowner.roles = roleLst;
+
+            for(var i = resourceowner.claims.length - 1; i >= 0; i--)
+            {
+              if (indexes.indexOf(i) > -1)
+              {
+                resourceowner.claims.splice(i);
+              }
+            }
+
+            roles.each(function() {
+              var val = $(this).html();
+              resourceowner.claims.push({ key: 'role', value: val });
+            });
 
             fm.notify({
               type: 'updateuser',
@@ -126,22 +141,37 @@ elFinder.prototype.commands.userinfo = function() {
           picture = 'img/unknown.png';
         }
 
-        var roles = 'No roles';
-        if (user.roles && user.roles.length > 0) {
-          roles = constructRemovableTiles(user.roles);
+        if (!user.claims) {
+          user.claims = [];
+        }
+
+        var rolesStr = 'No roles';
+        if (user.claims.length > 0)
+        {
+          var roles = [];
+          user.claims.forEach(function(record) {
+            if (record.key === 'role')
+            {
+              roles.push(record.value);
+            }
+          });
+          if (roles.length > 0)
+          {
+            rolesStr = constructRemovableTiles(roles);
+          }
         }
 
         if (user.is_localaccount) {
-          content = content.replace('{roles}', roles);
+          content = content.replace('{roles}', rolesStr);
         }
         else {
           content = '<table class="elfinder-info-tb"><tbody><tr><td>Not a local account</td></tr></tbody></table>';
         }
 
         view = view.replace('{picture}', picture);
-        view = view.replace('{title}', user.name);
+        view = view.replace('{title}', user.login);
         view = view.replace('{content}', content);
-        view = view.replace('{editUrl}', options.editUrl.replace('{user_id}', user.id));
+        view = view.replace('{editUrl}', options.editUrl.replace('{user_id}', user.login));
         dialog = fm.dialog(view, opts);
         resourceowner = user;
         dialog.attr('id', id);
