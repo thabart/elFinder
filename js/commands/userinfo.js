@@ -58,17 +58,17 @@ elFinder.prototype.commands.userinfo = function() {
             var roles = $(self).find('.elfinder-white-box').children('label');
             var indexes = [];
             resourceowner.claims.forEach(function(c, index) {
-              if (c.key === 'role')
-              {
+              if (c.key === 'role') {
                 indexes.push(index);
               }
             });
 
-            for(var i = resourceowner.claims.length - 1; i >= 0; i--)
+            var length = resourceowner.claims.length;
+            for(var i = length - 1; i >= 0; i--)
             {
-              if (indexes.indexOf(i) > -1)
+              if (indexes.indexOf(i) > -1 && resourceowner.claims[i].key === 'role')
               {
-                resourceowner.claims.splice(i);
+                resourceowner.claims.splice(i, 1);
               }
             }
 
@@ -76,7 +76,6 @@ elFinder.prototype.commands.userinfo = function() {
               var val = $(this).html();
               resourceowner.claims.push({ key: 'role', value: val });
             });
-
             fm.notify({
               type: 'updateuser',
               msg: 'Update user information',
