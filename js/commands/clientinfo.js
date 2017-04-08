@@ -52,8 +52,17 @@ elFinder.prototype.commands.clientinfo = function() {
           callbackUrls = data.redirect_uris.join(',');
         }
 
+		var secret = "<no shared secret>";
+		if (data.secrets && data.secrets.length > 0) {
+			data.secrets.forEach(function(s) {
+				if (s.type == "SharedSecret") {
+					secret = s.value;
+				}
+			});
+		}
+		
         content = content.replace('{clientId}', data.client_id);
-        content = content.replace('{clientSecret}', data.client_secret);
+        content = content.replace('{clientSecret}', secret);
         content = content.replace('{callbackUrls}', callbackUrls);
         view = view.replace('{title}', file.name);
         view = view.replace('{editUrl}', options.editUrl.replace('{client_id}', data.client_id));
