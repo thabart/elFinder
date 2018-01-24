@@ -1482,7 +1482,9 @@ window.elFinder = function(node, opts) {
 		}
 
 		delete options.preventFail
-
+		delete options.headers["X-Requested-With"];
+		options.data = JSON.stringify(options.data);
+		options.contentType = 'application/json; charset=utf-8';
 		dfrd.xhr = xhr = this.transport.send(options).fail(error).done(success);
 
 		// add "open" xhr into queue
@@ -3798,7 +3800,7 @@ elFinder.prototype = {
 
 				xhr.open('POST', self.uploadURL, true);
 				xhr.withCredentials = false;
-				
+
 				// set request headers
 				if (fm.customHeaders) {
 					$.each(fm.customHeaders, function(key) {
