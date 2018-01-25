@@ -15,21 +15,23 @@ $.fn.elfindersearchbutton = function(cmd) {
 			search = function() {
 				opts && opts.slideUp();
 				var val = $.trim(input.val()),
-					from = !$('#' + id('SearchFromAll')).prop('checked'),
-					mime = $('#' + id('SearchMime')).prop('checked');
+					from = !$('#' + id('SearchFromAll')).prop('checked');
+					// mime = $('#' + id('SearchMime')).prop('checked');
 				if (from) {
-					if ($('#' + id('SearchFromVol')).prop('checked')) {
+					/* if ($('#' + id('SearchFromVol')).prop('checked')) {
 						from = fm.root(fm.cwd().hash);
-					} else {
+					} else { */
 						from = fm.cwd().hash;
-					}
+					/* } */
 				}
+				/*
 				if (mime) {
 					mime = val;
 					val = '.';
 				}
+				*/
 				if (val) {
-					cmd.exec(val, from, mime).done(function() {
+					cmd.exec(val, from, null).done(function() {
 						result = true;
 						input.focus();
 					}).fail(function() {
@@ -126,7 +128,7 @@ $.fn.elfindersearchbutton = function(cmd) {
 				if (opts) {
 					opts.find('div.buttonset').buttonset();
 					$('#'+id('SearchFromAll')).next('label').attr('title', fm.i18n('searchTarget', fm.i18n('btnAll')));
-					$('#'+id('SearchMime')).next('label').attr('title', fm.i18n('searchMime'));
+					// $('#'+id('SearchMime')).next('label').attr('title', fm.i18n('searchMime'));
 					opts.on('mousedown', 'div.buttonset', function(e){
 							e.stopPropagation();
 							opts.data('infocus', true);
@@ -153,7 +155,7 @@ $.fn.elfindersearchbutton = function(cmd) {
 					});
 		
 					$('#'+id('SearchFromCwd')).next('label').attr('title', fm.i18n('searchTarget', dirs.join(fm.option('separator'))));
-					$('#'+id('SearchFromVol')).next('label').attr('title', fm.i18n('searchTarget', volroot.name));
+					// $('#'+id('SearchFromVol')).next('label').attr('title', fm.i18n('searchTarget', volroot.name));
 				}
 			})
 			.shortcut({
