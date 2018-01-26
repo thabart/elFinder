@@ -144,10 +144,10 @@ elFinder.prototype.commands.permissions = function() {
           });
         });
         var result = {
-          clients: assignedClientIds,
           scopes: assignedPermissions,
           claims: assignedClaims
         };
+        result[clientsKey] = assignedClientIds;
         if (id) {
           result.id = id;
         }
@@ -415,17 +415,7 @@ elFinder.prototype.commands.permissions = function() {
       */
       displayView = function(data) {
         information = data;
-        var title = 'Manage <i>\'' + file.name + '\'</i> permissions (<i>{information}</i>)';
-        if (!data.hasOwnProperty('is_owner')) {
-          title = title.replace('{information}', 'no permission');
-        } else {
-          if (data['is_owner']) {
-            title = title.replace('{information}', 'permissions owner');
-          } else {
-            title = title.replace('{information}', 'permissions are inherited from a parent');
-          }
-        }
-
+        var title = 'Manage <i>\'' + file.name + '\'</i> permissions';
         var edit = getRuleView({});
         content = content.replace('{items}', '<div class="permission-menu-item"><a href="#" data-rule="new">New</a></div>');
         content = content.replace('{details}', edit);
@@ -454,15 +444,6 @@ elFinder.prototype.commands.permissions = function() {
       hideCnt: true
     });
 
-    // retrieve clients
-    /*
-    var openIdStore = this.fm.getStore('openIdStore');
-    openIdStore.getInstance().getOpenIdClients().then(function(openIdClients) {
-      console.log(openIdClients);
-    }).fail(function() {
-
-    });
-    */
     reqs.push(fm.request({
       data: { cmd: 'perms', target: file.hash },
       preventDefault: true
