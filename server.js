@@ -7,4 +7,5 @@ app.get('/', function(req, res) {
     res.render('index.html');
 });
 
+console.log("Listen 4201");
 app.listen(4201);

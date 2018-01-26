@@ -435,6 +435,10 @@ window.elFinder = function(node, opts) {
 		this.options.commands = opts.commands;
 	}
 
+	if (opts.stores) {
+		this.options.stores = opts.stores;
+	}
+
 	if (opts.uiOptions && opts.uiOptions.toolbar) {
 		this.options.uiOptions.toolbar = opts.uiOptions.toolbar;
 	}
@@ -1863,6 +1867,21 @@ window.elFinder = function(node, opts) {
 		return clipboard.slice(0, clipboard.length);
 	}
 
+
+	/**
+	* Return the store or NULL.
+	*
+	* @param  String       store name
+	* @return store
+	*/
+	this.getStore = function(name) {
+		if (!self._stores[name]) {
+			return null;
+		}
+
+		return self._stores[name];
+	}
+
 	/**
 	 * Return true if command enabled
 	 *
@@ -2322,6 +2341,13 @@ window.elFinder = function(node, opts) {
 	 **/
 	this._commands = {};
 
+	/**
+	* Loaded stores.
+	*
+	* @type Object
+	**/
+	this._stores = {};
+
 	if (!$.isArray(this.options.commands)) {
 		this.options.commands = [];
 	}
@@ -2353,6 +2379,15 @@ window.elFinder = function(node, opts) {
 					}
 				});
 			}
+		}
+	});
+
+	// Load the stores.
+	$.each(this.options.stores, function(i, name) {
+		var store = self.stores[name];
+		if ($.isFunction(store) && !self._stores[name]) {
+			store.prototype = base;
+			self._stores[name] = store(self);
 		}
 	});
 
@@ -2993,6 +3028,13 @@ elFinder.prototype = {
 	 * @type Object
 	 */
 	commands : {},
+
+	/**
+	* Stores constructors.
+	*
+	* @type Object
+	*/
+	stores: {},
 
 	/**
 	 * Commands to add the item (space delimited)

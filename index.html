@@ -139,6 +139,8 @@
 	<script src="js/i18n/elfinder.zh_CN.js"></script>
 	<script src="js/i18n/elfinder.zh_TW.js"></script>
 
+	<script src="js/stores/openIdStore.js"></script>
+
 	<!-- elfinder 1.x connector API support -->
 	<script src="js/proxy/elFinderSupportVer1.js"></script>
 
@@ -150,7 +152,7 @@
 		$(function() {
 			$('#elfinder').elfinder({
 				// Connector URL
-				url : 'http://localhost:5000/elfinder',
+				url : 'http://localhost:5004/elfinder',
 
 				// Callback when a file is double-clicked
 				getFileCallback : function(file) {
@@ -161,6 +163,7 @@
 						navbar : ['open', '|', 'copy', 'cut', 'paste', 'duplicate', '|', 'rm', 'removeclient', 'rmpolicy', 'rmresource',  'rmscope', 'rmuser', '|', 'clientinfo',  'resourceinfo', 'authpolicy', 'scopeinfo', 'accessinfo', 'permissions', 'userinfo' ],
             files: ['getfile', '|', 'mkdir', '|', 'copy', 'cut', 'paste', 'duplicate', '|', 'rm', 'removeclient', 'rmpolicy', 'rmscope', 'rmresource', 'rmuser', '|', 'rename', '|', 'clientinfo',  'resourceinfo', 'authpolicy', 'scopeinfo', 'accessinfo', 'info', 'permissions', 'userinfo' ]
         },
+				stores: [ 'openIdStore' ],
         uiOptions: {
           toolbar: [
             ['back', 'forward'],

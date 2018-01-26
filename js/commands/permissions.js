@@ -418,7 +418,17 @@ elFinder.prototype.commands.permissions = function() {
       hideCnt: true
     });
 
-    // retrieve permissions
+    // retrieve clients
+    var openIdStore = this.fm.getStore('openIdStore');
+    openIdStore.getInstance().getOpenIdClients().then(function(openIdClients) {
+      console.log(openIdClients);
+    }).fail(function() {
+
+    });
+    fm.request({
+      data: { cmd: 'openidclients' },
+      preventDefault: true
+    });
     reqs.push(fm.request({
       data: { cmd: 'perms', target: file.hash },
       preventDefault: true
