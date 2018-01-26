@@ -2,7 +2,8 @@
 
 elFinder.prototype.commands.permissions = function() {
   var fm = this.fm,
-    spclass = 'elfinder-dialog-notify';
+    spclass = 'elfinder-dialog-notify',
+    clientsKey = 'openidclients';
   this.shortcuts = [{
 		pattern     : 'ctrl+p'
   }];
@@ -50,8 +51,8 @@ elFinder.prototype.commands.permissions = function() {
           var self = this;
           fm.lockfiles({files : [file.hash]});
           // 0. Add the other tabs
-          if(information.rules) {
-            information.rules.forEach(function(rule) {
+          if(information.authrules) {
+            information.authrules.forEach(function(rule) {
               addRule(self, rule);
             });
           }
@@ -160,7 +161,7 @@ elFinder.prototype.commands.permissions = function() {
       getRemovableClaims = function(claims) {
           var content = "";
           claims.forEach(claim => {
-            content += "<div class='elfinder-white-box can-be-removed'><label>"+claim.type+":"+claim.value+"</label><a href='#'>(Remove)</a></div>";
+            content += "<div class='elfinder-white-box can-be-removed'><label>"+claim.type+":"+claim.value+"</label><a href='#' data-type='"+claim.type+"' data-value='"+claim.value+"'>(Remove)</a></div>";
           });
           return content;
       },
@@ -255,10 +256,11 @@ elFinder.prototype.commands.permissions = function() {
       * Refresh evt handlers of current rule
       */
       refreshCurrentRuleEventHandlers = function() {
+        activeElement.detail.find('.claim-value').off('click');
+        activeElement.detail.find('.add-claim').off('click');
         activeElement.detail.find('.claim-value').keydown(function(e) {
           e.stopImmediatePropagation();
         });
-        refreshRemovableClaimsEvtHandlers();
         activeElement.detail.find('.add-claim').on('click', function() {
           var claimType = activeElement.detail.find('.claim-type').val(),
             claimValue = activeElement.detail.find('.claim-value').val();
@@ -266,6 +268,8 @@ elFinder.prototype.commands.permissions = function() {
               activeElement.detail.find('.assigned-claims').html('');
           }
 
+          activeElement.detail.find('.claim-type option:selected').remove();
+          activeElement.detail.find('.claim-value').val('');
           var child = getRemovableClaims([{
             type: claimType,
             value: claimValue
@@ -273,19 +277,44 @@ elFinder.prototype.commands.permissions = function() {
           activeElement.detail.find('.assigned-claims').append(child);
           refreshRemovableClaimsEvtHandlers();
         });
+        refreshRemovableClaimsEvtHandlers();
       },
       /**
       * Refresh removable claims evt handlers
       */
       refreshRemovableClaimsEvtHandlers = function() {
-        activeElement.detail.find('.can-be-removed').on('click', function(e) {
+        activeElement.detail.find('.can-be-removed a').off('click');
+        activeElement.detail.find('.can-be-removed a').on('click', function(e) {
           e.preventDefault();
           var currentTarget = e.currentTarget;
-          if ($(currentTarget).parent().children().length === 1) {
-            $(currentTarget).parent().html('no assigned claims');
+          var claimValue = $(currentTarget).data('value');
+          var claimType = $(currentTarget).data('type');
+          var canBeRemovedBox = $(currentTarget).closest('.can-be-removed');
+          if (canBeRemovedBox.parent().children().length === 1) {
+            canBeRemovedBox.parent().html('no assigned claims');
           } else {
-            $(currentTarget).remove();
+            canBeRemovedBox.remove();
           }
+
+          var claimTypeElt = activeElement.detail.find('.claim-type');
+          claimTypeElt.append("<option value='"+claimType+"'>"+claimType+"</option>");
+          var newOptions = claimTypeElt.find('option').clone();
+          newOptions.sort(function(a, b) {
+              if (a.value > b.value) {
+                return 1;
+              }
+
+              if (a.value < b.value) {
+                return -1;
+              }
+
+              return 0;
+          });
+
+          claimTypeElt.empty();
+          claimTypeElt.append(newOptions);
+          claimTypeElt.val(claimType);
+          activeElement.detail.find('.claim-value').val(claimValue);
         });
       },
       /**
@@ -322,16 +351,16 @@ elFinder.prototype.commands.permissions = function() {
         }
 
         // Fill-in client information
-        if (!information['clients'] || information['clients'].length === 0) {
+        if (!information[clientsKey] || information[clientsKey].length === 0) {
           clientsView = clientsView.replace('{clients}', 'no client');
         }
         else {
           var clientContent = "";
-          information['clients'].forEach(d => {
-            if (permissionRule['clients'] && permissionRule['clients'].indexOf(d.id) > -1) {
-              clientContent += "<div class='elfinder-white-box'><input type='checkbox' data-id='"+d.id+"' checked/><label>"+d.name+"</label></div>";
+          information[clientsKey].forEach(d => {
+            if (permissionRule[clientsKey] && permissionRule[clientsKey].indexOf(d.client_id) > -1) {
+              clientContent += "<div class='elfinder-white-box'><input type='checkbox' data-id='"+d.client_id+"' checked/><label>"+d.client_name+"</label></div>";
             } else {
-              clientContent += "<div class='elfinder-white-box'><input type='checkbox' data-id='"+d.id+"'/><label>"+d.name+"</label></div>";
+              clientContent += "<div class='elfinder-white-box'><input type='checkbox' data-id='"+d.client_id+"'/><label>"+d.client_name+"</label></div>";
             }
           });
           clientsView = clientsView.replace('{clients}', clientContent);
@@ -339,13 +368,20 @@ elFinder.prototype.commands.permissions = function() {
 
         // Fill-in claims
         var lstClaims = "";
-        if (!information['claims'] || information['claims'].length === 0) {
+        if (!information['openidclaims'] || information['openidclaims'].length === 0) {
           lstClaims = 'no claim';
         }
         else {
           var claimContent = "<select class='claim-type'>{selectOptions}</select><input type='text' class='claim-value' style='margin:0 5px 0 5px;' /><button type='button' class='add-claim'>Add</button>";
           var selectOptions = "";
-          information['claims'].forEach(c => selectOptions += '<option value=\''+c+'\'>'+c+'</option>');
+          information['openidclaims'].sort().forEach(c => {
+            var permClaims = permissionRule['claims'];
+            if (permClaims && permClaims.length > 0 && permClaims.filter(function(pc) { return pc.type === c; }).length > 0) {
+              return;
+            }
+
+            selectOptions += '<option value=\''+c+'\'>'+c+'</option>';
+          });
           claimContent = claimContent.replace('{selectOptions}', selectOptions);
           lstClaims = claimContent;
         }
@@ -419,16 +455,14 @@ elFinder.prototype.commands.permissions = function() {
     });
 
     // retrieve clients
+    /*
     var openIdStore = this.fm.getStore('openIdStore');
     openIdStore.getInstance().getOpenIdClients().then(function(openIdClients) {
       console.log(openIdClients);
     }).fail(function() {
 
     });
-    fm.request({
-      data: { cmd: 'openidclients' },
-      preventDefault: true
-    });
+    */
     reqs.push(fm.request({
       data: { cmd: 'perms', target: file.hash },
       preventDefault: true
