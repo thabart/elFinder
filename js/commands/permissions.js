@@ -438,6 +438,10 @@ elFinder.prototype.commands.permissions = function() {
         var clientsView = '<fieldset><legend>Allowed clients</legend><div>{clients}</div><div class=\'assigned-clients\'>{assignedClients}</div></fieldset>';
         var claimsView = '<fieldset><legend>Allowed claims</legend><div>{claims}</div><div class="assigned-claims"></div></fieldset>';
         var permissionsView = '<fieldset><legend>Permissions</legend><div>{permissions}</div><div class=\'assigned-permissions\'>{assignedPermissions}</div></fieldset>';
+        
+        if (permissionRule.id) {
+          clientsView += '<input type="hidden" name="id" value="'+permissionRule.id+'"/>';
+        }
 
         // Display the identity providers.
         if (!information[idProvidersKey] || information[idProvidersKey] === 0) {

@@ -104,6 +104,7 @@
 	<script src="js/commands/rmuser.js"></script>
 	<script src="js/commands/userinfo.js"></script>
 	<script src="js/commands/mkscope.js"></script>
+	<script src="js/commands/umaresource.js"></script>
 
 	<!-- elfinder languages -->
 	<script src="js/i18n/elfinder.ar.js"></script>
@@ -160,8 +161,8 @@
 				},
         contextmenu: {
 						cwd    : ['reload', 'back', '|', 'mkdir', 'mkfile', 'paste', 'addclient', 'mkuser', 'mkscope', '|', 'sort', '|', 'info'],
-						navbar : ['open', '|', 'copy', 'cut', 'paste', 'duplicate', '|', 'rm', 'removeclient', 'rmpolicy', 'rmresource',  'rmscope', 'rmuser', '|', 'clientinfo',  'resourceinfo', 'authpolicy', 'scopeinfo', 'accessinfo', 'permissions', 'userinfo' ],
-            files: ['getfile', '|', 'mkdir', '|', 'copy', 'cut', 'paste', 'duplicate', '|', 'rm', 'removeclient', 'rmpolicy', 'rmscope', 'rmresource', 'rmuser', '|', 'rename', '|', 'clientinfo',  'resourceinfo', 'authpolicy', 'scopeinfo', 'accessinfo', 'info', 'permissions', 'userinfo' ]
+						navbar : ['open', '|', 'copy', 'cut', 'paste', 'duplicate', '|', 'rm', 'removeclient', 'rmpolicy', 'rmresource',  'rmscope', 'rmuser', '|', 'clientinfo',  'resourceinfo', 'authpolicy', 'scopeinfo', 'accessinfo', 'permissions', 'userinfo', 'umaresource' ],
+            files: ['getfile', '|', 'mkdir', '|', 'copy', 'cut', 'paste', 'duplicate', '|', 'rm', 'removeclient', 'rmpolicy', 'rmscope', 'rmresource', 'rmuser', '|', 'rename', '|', 'clientinfo',  'resourceinfo', 'authpolicy', 'scopeinfo', 'accessinfo', 'info', 'permissions', 'userinfo', 'umaresource' ]
         },
 				stores: [ 'openIdStore' ],
         uiOptions: {
@@ -172,7 +173,7 @@
 			      ['rename'],
 			      ['search'],
 			      ['view', 'sort'],
-            ['permissions']
+            ['umaresource', 'permissions']
           ]
         },
 				commandsOptions: {
