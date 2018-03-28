@@ -120,6 +120,7 @@
 .elfinder-button-icon-duplicate { background-position: 0 -304px; }
 .elfinder-button-icon-rename    { background-position: 0 -320px; }
 .elfinder-button-icon-edit      { background-position: 0 -336px; }
+.elfinder-button-icon-protectresource,
 .elfinder-button-icon-quicklook { background-position: 0 -352px; }
 .elfinder-button-icon-upload    { background-position: 0 -368px; }
 .elfinder-button-icon-download  { background-position: 0 -384px; }
@@ -151,8 +152,7 @@
 .elfinder-button-icon-addclient,
 .elfinder-button-icon-mkscope,
 .elfinder-button-icon-mkuser { background-position: 0 -48px; }
-.elfinder-button-icon-permissions,
-.elfinder-button-icon-protectresource { background-position: 0 -64px; }
+.elfinder-button-icon-permissions { background-position: 0 -64px; }
 
 /* button with dropdown menu*/
 .elfinder .elfinder-menubutton { overflow:visible; }
