@@ -14,8 +14,8 @@ elFinder.prototype.commands.permissions = function() {
   this.tpl = {
     main     : '<div class="ui-helper-clearfix elfinder-info-title">{title}</div>{content}',
     content  : '<table style="padding-top:5px;">'+
-      '<tr><td style="vertical-align:top; width:90px;"><b>Rules</b><div class="permission-menu">{items}</div></td><td style="vertical-align:top;"><div class="permission-details">{details}</div></td></tr>'+
-      '<tr><td colspan="2"><button class=\'add-rule ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only\'><span class=\'ui-button-text\'>Add rule</span></button><button class="remove-rule ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only"><span class=\'ui-button-text\'>Remove rule</span></button><button class="save ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only"><span class=\'ui-button-text\'>Save</span></button></td></tr></table>',
+      '<tr><td style="vertical-align:top; width:90px;"><b>authRulesLabel</b><div class="permission-menu">{items}</div></td><td style="vertical-align:top;"><div class="permission-details">{details}</div></td></tr>'+
+      '<tr><td colspan="2"><button class=\'add-rule ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only\'><span class=\'ui-button-text\'>addRuleLabel</span></button><button class="remove-rule ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only"><span class=\'ui-button-text\'>Remove rule</span></button><button class="save ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only"><span class=\'ui-button-text\'>saveLabel</span></button></td></tr></table>',
     edit: '<div class="permission-rule"><div class=\'elfinder-permissions-padding\'>{idproviders}</div><div class=\'elfinder-permissions-padding\'>{clients}</div><div class=\'elfinder-permissions-padding\'>{claims}</div><div class=\'elfinder-permissions-padding\'>{permissions}</div></div>'
   };
   this.getstate = function(sel) {
@@ -27,6 +27,7 @@ elFinder.prototype.commands.permissions = function() {
       information = null,
       id = fm.namespace+'-permissions-'+file.hash,
       view = this.tpl.main,
+      dialog = fm.getUI().find('#'+id),
       content = this.tpl.content,
       edit = this.tpl.edit,
       reqs = [],
@@ -34,13 +35,10 @@ elFinder.prototype.commands.permissions = function() {
       activeElement = {},
 			dfrd     = $.Deferred()
         .done(function(data) {
-          if (data.added) {
-            
-          }
-          fm.exec('reload', data.added[0].hash);
+          // dialog.elfinderdialog('close');
         }),
       opts    = {
-        title : 'Permissions',
+        title : 'permissionsTitle',
 				width : 'auto',
         height: '450',
         close: function() {
@@ -86,8 +84,13 @@ elFinder.prototype.commands.permissions = function() {
                 rules.push(getPermissionRule($(this)));
               }
             });
-            console.log(rules);
-            /*
+
+            fm.notify({
+              type: 'addpermissions',
+              msg: 'Update the permissions',
+              cnt: 1,
+              hideCnt: true
+            });
             reqs.push(fm.request({
               data: {
                 cmd: 'mkperm',
@@ -108,7 +111,6 @@ elFinder.prototype.commands.permissions = function() {
                 cnt: -1
               });
             }));
-            */
           });
         }
 			},
@@ -156,7 +158,7 @@ elFinder.prototype.commands.permissions = function() {
       getRemovableClaims = function(claims) {
           var content = "";
           claims.forEach(claim => {
-            content += "<div class='elfinder-white-box can-be-removed' data-isclaim='true' data-defaultmessage='"+fm.i18n('noClaim')+"'><label>"+claim.type+":"+claim.value+"</label><a href='#' data-type='"+claim.type+"' data-value='"+claim.value+"'>(Remove)</a></div>";
+            content += "<div class='elfinder-white-box can-be-removed' data-isclaim='true' data-defaultmessage='"+fm.i18n('noClaimLabel')+"'><label>"+claim.type+":"+claim.value+"</label><a href='#' data-type='"+claim.type+"' data-value='"+claim.value+"'>(Remove)</a></div>";
           });
           return content;
       },
@@ -167,7 +169,7 @@ elFinder.prototype.commands.permissions = function() {
       getRemovableClients = function(clients) {        
           var content = "";
           clients.forEach(client => {
-            content += "<div class='elfinder-white-box can-be-removed' data-defaultmessage='no client'><label>"+client+"</label><a href='#' data-type='"+client+"' data-value='"+client+"'>(Remove)</a></div>";
+            content += "<div class='elfinder-white-box can-be-removed' data-defaultmessage='noClientLabel'><label>"+client+"</label><a href='#' data-type='"+client+"' data-value='"+client+"'>(Remove)</a></div>";
           });
           return content;
       },
@@ -177,8 +179,12 @@ elFinder.prototype.commands.permissions = function() {
       */
       getRemovableScopes = function(scopes) {
           var content = "";
+          if (!scopes) {
+            return content;
+          }
+
           scopes.forEach(scope => {
-            content += "<div class='elfinder-white-box can-be-removed' data-defaultmessage='no permission'><label>"+scope+"</label><a href='#' data-type='"+scope+"' data-value='"+scope+"'>(Remove)</a></div>";
+            content += "<div class='elfinder-white-box can-be-removed' data-isscope='true' data-defaultmessage='noPermissionLabel'><label>"+scope+"</label><a href='#' data-type='"+scope+"' data-value='"+scope+"'>(Remove)</a></div>";
           });
           return content;
       },
@@ -219,7 +225,7 @@ elFinder.prototype.commands.permissions = function() {
         var details = $(elt).find('.permission-details');
         var index = menu.children().length;
         // 1. Add menu item
-        menu.append('<div class="permission-menu-item"><a href="#" data-rule="new">Rule '+index+'</a></div>');
+        menu.append('<div class="permission-menu-item"><a href="#" data-rule="new">authRuleLabel '+index+'</a></div>');
         // 2. Add content
         var content = getRuleView(permissionRule);
         details.append(content);
@@ -279,9 +285,9 @@ elFinder.prototype.commands.permissions = function() {
         activeElement.detail.find('.claim-value').off('click');
         activeElement.detail.find('.scope-name').off('click');
         activeElement.detail.find('.client-id').off('click');
+        activeElement.detail.find('.select-permission').off('click');
         activeElement.detail.find('.add-claim').off('submit');
         activeElement.detail.find('.add-client').off('submit');
-        activeElement.detail.find('.add-permission').off('submit');
         activeElement.detail.find('.claim-value').keydown(function(e) {
           e.stopImmediatePropagation();
         });
@@ -319,16 +325,20 @@ elFinder.prototype.commands.permissions = function() {
           activeElement.detail.find('.assigned-clients').append(child);
           refreshRemovableEvtHandlers();
         });
-        activeElement.detail.find('.add-permission').on('submit', function(e) {
-          e.preventDefault();
-          var scopeId = activeElement.detail.find('.scope-name').val();
+        activeElement.detail.find('.select-permission').on('click', function() {
+          var permission = activeElement.detail.find('.permissions').val();
+          if (!permission) {
+            return;
+          }
+
           if (activeElement.detail.find('.assigned-permissions').children().length === 0) {
               activeElement.detail.find('.assigned-permissions').html('');
           }
-          var child = getRemovableScopes([scopeId]);
-          activeElement.detail.find('.scope-name').val('');         
-          activeElement.detail.find('.assigned-permissions').append(child);
-          refreshRemovableEvtHandlers();
+
+          activeElement.detail.find('.permissions option:selected').remove();
+          var child = getRemovableScopes([permission]);
+          activeElement.detail.find('.assigned-permissions').append(child);         
+          refreshRemovableEvtHandlers(); 
         });
         activeElement.detail.find('.select-idprovider').on('click', function() {
           refreshSelectedIdProvider({});
@@ -380,32 +390,55 @@ elFinder.prototype.commands.permissions = function() {
           var canBeRemovedBox = $(currentTarget).closest('.can-be-removed');
           var defaultMessage = $(canBeRemovedBox).data('defaultmessage');
           var isClaim = $(canBeRemovedBox).data('isclaim');
+          var isScope = $(canBeRemovedBox).data('isscope');
           if (canBeRemovedBox.parent().children().length === 1) {
             canBeRemovedBox.parent().html(defaultMessage);
           } else {
             canBeRemovedBox.remove();
           }
 
-          if (!isClaim || isClaim !== 'true') { return; }
-          var claimTypeElt = activeElement.detail.find('.openidClaims');
-          claimTypeElt.append("<option value='"+claimType+"'>"+claimType+"</option>");
-          var newOptions = claimTypeElt.find('option').clone();
-          newOptions.sort(function(a, b) {
-              if (a.value > b.value) {
-                return 1;
-              }
+          if (isClaim) {
+              var claimTypeElt = activeElement.detail.find('.openidClaims');
+              claimTypeElt.append("<option value='"+claimType+"'>"+claimType+"</option>");
+              var newOptions = claimTypeElt.find('option').clone();
+              newOptions.sort(function(a, b) {
+                  if (a.value > b.value) {
+                    return 1;
+                  }
 
-              if (a.value < b.value) {
-                return -1;
-              }
+                  if (a.value < b.value) {
+                    return -1;
+                  }
 
-              return 0;
-          });
+                  return 0;
+              });
 
-          claimTypeElt.empty();
-          claimTypeElt.append(newOptions);
-          claimTypeElt.val(claimType);
-          activeElement.detail.find('.claim-value').val(claimValue);
+              claimTypeElt.empty();
+              claimTypeElt.append(newOptions);
+              claimTypeElt.val(claimType);
+              activeElement.detail.find('.claim-value').val(claimValue);
+             return; 
+          }
+
+          if (isScope) {
+              var permissionElt = activeElement.detail.find('.permissions');
+              permissionElt.append("<option value='"+claimValue+"'>"+claimValue+"</option>");    
+              var newOptions = permissionElt.find('option').clone();
+              newOptions.sort(function(a, b) {
+                  if (a.value > b.value) {
+                    return 1;
+                  }
+
+                  if (a.value < b.value) {
+                    return -1;
+                  }
+
+                  return 0;
+              });
+
+              permissionElt.empty();
+              permissionElt.append(newOptions);   
+          }
         });
       },
       /**
@@ -434,10 +467,10 @@ elFinder.prototype.commands.permissions = function() {
       */
       getRuleView = function(permissionRule) {
         var result = edit;
-        var idProviderView = '<label>Select an identity provider</label><div class=\'idproviders\'>{idproviders}</div>';
-        var clientsView = '<fieldset><legend>Allowed clients</legend><div>{clients}</div><div class=\'assigned-clients\'>{assignedClients}</div></fieldset>';
-        var claimsView = '<fieldset><legend>Allowed claims</legend><div>{claims}</div><div class="assigned-claims"></div></fieldset>';
-        var permissionsView = '<fieldset><legend>Permissions</legend><div>{permissions}</div><div class=\'assigned-permissions\'>{assignedPermissions}</div></fieldset>';
+        var idProviderView = '<label>selectIdProviderLabel</label><div class=\'idproviders\'>{idproviders}</div>';
+        var clientsView = '<fieldset><legend>allowedClientsLabel</legend><div>{clients}</div><div class=\'assigned-clients\'>{assignedClients}</div></fieldset>';
+        var claimsView = '<fieldset><legend>allowedClaimsLabel</legend><div>{claims}</div><div class="assigned-claims"></div></fieldset>';
+        var permissionsView = '<fieldset><legend>permissionsLabel</legend><div>{permissions}</div><div class=\'assigned-permissions\'>{assignedPermissions}</div></fieldset>';
         
         if (permissionRule.id) {
           clientsView += '<input type="hidden" name="id" value="'+permissionRule.id+'"/>';
@@ -445,9 +478,9 @@ elFinder.prototype.commands.permissions = function() {
 
         // Display the identity providers.
         if (!information[idProvidersKey] || information[idProvidersKey] === 0) {
-          idProviderView = idProviderView.replace('{idproviders}', 'no identity providers');
+          idProviderView = idProviderView.replace('{idproviders}', 'noIdProvidersLabel');
         } else {
-          var idProviderContent = "<select class='idproviders' style='margin:0 5px 0 5px;'>{selectOptions}</select><button class='select-idprovider ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only'><span class='ui-button-text'>Select</span></button>";      
+          var idProviderContent = "<select class='idproviders' style='margin:0 5px 0 5px;'>{selectOptions}</select><button class='select-idprovider ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only'><span class='ui-button-text'>selectLabel</span></button>";      
           var selectIdProviders = "";    
           information[idProvidersKey].forEach(i => {
             if (permissionRule[providerUrlKey] && permissionRule[providerUrlKey] === i.url) {
@@ -461,9 +494,9 @@ elFinder.prototype.commands.permissions = function() {
         }
 
         // Display the client identifiers.      
-        var clientsContent = "<form class='add-client'><input type='text' class='client-id' style='margin:0 5px 0 5px;' /><button class='ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only'><span class='ui-button-text'>Add</span></button></form>";
+        var clientsContent = "<form class='add-client'><input type='text' class='client-id' style='margin:0 5px 0 5px;' /><button class='ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only'><span class='ui-button-text'>addLabel</span></button></form>";
         if (!permissionRule[clientsKey] || permissionRule[clientsKey].length === 0) {
-          clientsView = clientsView.replace('{assignedClients}', 'no client');
+          clientsView = clientsView.replace('{assignedClients}', 'noClientLabel');
         } else {
           var assignedClients = getRemovableClients(permissionRule[clientsKey]);
           clientsView = clientsView.replace('{assignedClients}', assignedClients);
@@ -471,19 +504,32 @@ elFinder.prototype.commands.permissions = function() {
 
         clientsView = clientsView.replace('{clients}', clientsContent);
         // Display the claims.
-        var lstClaims = "<form class='add-claim'><select class='openidClaims' style='margin:0 5px 0 5px;'></select><input type='text' class='claim-value' style='margin:0 5px 0 5px;' /><button class='ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only'><span class='ui-button-text'>Add</span></button></form>";
+        var lstClaims = "<form class='add-claim'><select class='openidClaims' style='margin:0 5px 0 5px;'></select><input type='text' class='claim-value' style='margin:0 5px 0 5px;' /><button class='ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only'><span class='ui-button-text'>addLabel</span></button></form>";
         claimsView = claimsView.replace('{claims}', lstClaims);
 
         // Display the permissions.
-        var scopesContent = "<form class='add-permission'><input type='text' class='scope-name' style='margin:0 5px 0 5px;' /><button class='ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only'><span class='ui-button-text'>Add</span></button></form>";
-        if (!permissionRule[permissionsKey] || permissionRule[permissionsKey].length === 0) {
-          permissionsView = permissionsView.replace('{assignedPermissions}', 'no permission');
+        if (!information[permissionsKey] || information[permissionsKey] === 0) {
+          permissionsView = permissionsView.replace('{permissions}', '');
+          permissionsView = permissionsView.replace('{assignedPermissions}', 'noPermissionLabel');
         } else {
-          var assignedPermissions = getRemovableScopes(permissionRule[permissionsKey]);
-          permissionsView = permissionsView.replace('{assignedPermissions}', assignedPermissions);
-        }
+          var scopesContent = "<select class='permissions' style='margin:0 5px 0 5px;'>{selectOptions}</select><button class='select-permission ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only'><span class='ui-button-text'>addLabel</span></button>"; 
+          var selectPermissions = "";    
+          information[permissionsKey].forEach(i => {
+            if (!permissionRule[permissionsKey] || permissionRule[permissionsKey] !== i) {
+              selectPermissions += '<option value=\''+i+'\'>'+i+'</option>';
+            }
+          });
 
-        permissionsView = permissionsView.replace('{permissions}', scopesContent);
+          var assignedPermissions = getRemovableScopes(permissionRule[permissionsKey]);
+          if (assignedPermissions === "") {
+            assignedPermissions = "noPermissionLabel";
+          }
+
+          scopesContent = scopesContent.replace('{selectOptions}', selectPermissions);
+          permissionsView = permissionsView.replace('{assignedPermissions}', assignedPermissions);
+          permissionsView = permissionsView.replace('{permissions}', scopesContent);
+        }
+        
         result = result.replace('{idproviders}', idProviderView);
         result = result.replace('{clients}', clientsView);
         result = result.replace('{claims}', claimsView);
@@ -496,9 +542,9 @@ elFinder.prototype.commands.permissions = function() {
       */
       displayView = function(data) {
         information = data;
-        var title = 'Manage <i>\'' + file.name + '\'</i> permissions';
+        var title = 'managePermissionsTitle';
         var edit = getRuleView({});
-        content = content.replace('{items}', '<div class="permission-menu-item"><a href="#" data-rule="new">New</a></div>');
+        content = content.replace('{items}', '<div class="permission-menu-item"><a href="#" data-rule="new">newLabel</a></div>');
         content = content.replace('{details}', edit);
         view = view.replace('{content}', content);
         view = view.replace('{title}', title);
@@ -535,7 +581,7 @@ elFinder.prototype.commands.permissions = function() {
         cnt: -1
       });
     }).fail(function() {
-      fm.trigger('error', {error : 'the permission cannot be retrieved'});
+      fm.trigger('error', {error : 'theResourceMustBeFirstCreated'});
       fm.notify({
         type: 'permissions',
         cnt: -1

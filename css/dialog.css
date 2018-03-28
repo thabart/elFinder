@@ -151,11 +151,11 @@
 .elfinder-dialog-icon-chunkmerge  { background-position: 0 -160px; }
 .elfinder-dialog-icon-rm          { background-position: 0 -192px; }
 .elfinder-dialog-icon-permissions,
+.elfinder-dialog-icon-protectresource,
 .elfinder-dialog-icon-addpermissions,
 .elfinder-dialog-icon-clientinformation,
 .elfinder-dialog-icon-authpolicy,
 .elfinder-dialog-icon-addclient,
-.elfinder-dialog-icon-umaresource,
 .elfinder-dialog-icon-mkuser,
 .elfinder-dialog-icon-mkscope,
 .elfinder-dialog-icon-updatescope,
