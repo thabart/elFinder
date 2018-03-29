@@ -57,6 +57,7 @@
 .elfinder-ro .elfinder-perms { background-position:0 -64px;}
 
 /* write only */
+.elfinder-permowner .elfinder-perms,
 .elfinder-wo .elfinder-perms { background-position:0 -80px;}
 
 .elfinder-permowner {

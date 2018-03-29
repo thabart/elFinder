@@ -35,12 +35,14 @@ elFinder.prototype.commands.permissions = function() {
       activeElement = {},
 			dfrd     = $.Deferred()
         .done(function(data) {
-          // dialog.elfinderdialog('close');
+          fm.exec('reload', file.hash);
+          dialog.elfinderdialog('close');
         }),
       opts    = {
         title : 'permissionsTitle',
 				width : 'auto',
         height: '450',
+        destroyOnClose: true,
         close: function() {
           fm.unlockfiles({files : [file.hash]})
           $(this).elfinderdialog('destroy');
@@ -556,11 +558,10 @@ elFinder.prototype.commands.permissions = function() {
         content = content.replace('{details}', edit);
         view = view.replace('{content}', content);
         view = view.replace('{title}', title);
-        var dialog = fm.dialog(view, opts);
+        dialog = fm.dialog(view, opts);
         dialog.attr('id', id);
         dialog.addClass('dialog-size');
-      },
-      dialog = fm.getUI().find('#'+id);
+      };
 
     if (this.getstate([file.hash]) < 0) {
       return;

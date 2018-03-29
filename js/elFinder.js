@@ -4957,8 +4957,8 @@ elFinder.prototype = {
 	 */
 	perms2class : function(o) {
 		var c = '';
-		if (o.permowner) {
-			c = 'elfinder-permowner ';
+		if (o.has_security) {
+			c = 'elfinder-ro';
 		}
 
 		if (!o.read && !o.write) {
