@@ -23,7 +23,8 @@ elFinder.prototype.commands.protectresource = function() {
       view = this.tpl.main,
       content = this.tpl.content,
       dfrd     = $.Deferred()
-        .done(function(data) {
+        .done(function(data) {          
+          fm.exec('reload', file.hash);
           dialog.elfinderdialog('close');
       }),
       opts = {
@@ -63,39 +64,100 @@ elFinder.prototype.commands.protectresource = function() {
           elt.find('.assigned-scopes').append(child);
           refreshRemovableEvtHandlers(elt);
         });
-        elt.find('.patch-resource').click(function() {
-          var scopes = elt.find('.assigned-scopes .elfinder-white-box').children('label');
-          var assignedScopes = [];
-          scopes.each(function() {
-            assignedScopes.push($(this).html());
-          });
-
+        elt.find('.update-resource').click(function() { // Update the UMA resource.
           fm.notify({
             type: 'updateresource',
-            msg: 'Update the resource informations',
+            msg: 'Update UMA resource',
             cnt: 1,
             hideCnt: true
           });
-          reqs.push(fm.request({
-              data: {
-                cmd: 'patchresource',
-                target: file.hash,
-                scopes: assignedScopes
-              },
-              preventDefault: true
-            }).done(function(data) {
+          $.get(fm.options.authUrl).then(function(configuration) {
+            var scopes = elt.find('.assigned-scopes .elfinder-white-box').children('label');
+            var assignedScopes = [];
+            scopes.each(function() {
+              assignedScopes.push($(this).html());
+            });
+            var request = { _id: file['resource_id'], name: file.hash, type: 'hierarchy', scopes: assignedScopes };
+            $.ajax({
+              method: 'PUT',
+              url: configuration['resource_registration_endpoint'],
+              contentType: 'application/json',
+              data: JSON.stringify(request)
+            }).then(function() {     
+              dfrd.resolve();
               fm.notify({
                 type: 'updateresource',
                 cnt: -1
               });
-              dfrd.resolve(data);
             }).fail(function() {
-              fm.trigger('error', {error : 'The information cannot be saved'});
+              fm.trigger('error', {error : 'UMA resource cannot be updated'});
               fm.notify({
                 type: 'updateresource',
                 cnt: -1
               });
-            }));
+            });
+          }).fail(function() {
+            fm.trigger('error', {error : 'UMA resource cannot be updated'});
+            fm.notify({
+              type: 'updateresource',
+              cnt: -1
+            });
+          });
+        });
+        elt.find('.create-resource').click(function() { // Create the UMA resource.
+          fm.notify({
+            type: 'createresource',
+            msg: 'Create UMA resource',
+            cnt: 1,
+            hideCnt: true
+          });
+          $.get(fm.options.authUrl).then(function(configuration) {
+            var scopes = elt.find('.assigned-scopes .elfinder-white-box').children('label');
+            var assignedScopes = [];
+            scopes.each(function() {
+              assignedScopes.push($(this).html());
+            });
+            var request = { name: file.hash, type: 'hierarchy', scopes: assignedScopes };
+            $.ajax({
+              method: 'POST',
+              url: configuration['resource_registration_endpoint'],
+              contentType: 'application/json',
+              data: JSON.stringify(request)
+            }).then(function(authResult) {              
+              reqs.push(fm.request({
+                data: {
+                  cmd: 'umaResource',
+                  target: file.hash,
+                  resource_id: authResult['_id']
+                },
+                preventDefault: true
+              }).done(function(data) {
+                dfrd.resolve(data);
+                fm.notify({
+                  type: 'createresource',
+                  cnt: -1
+                });
+              }).fail(function() {
+                fm.trigger('error', {error : 'UMA resource cannot be created'});
+                fm.notify({
+                  type: 'createresource',
+                  cnt: -1
+                });
+              }));
+            }).fail(function(e) {
+              fm.trigger('error', {error : 'UMA resource cannot be created'});
+              fm.notify({
+                type: 'createresource',
+                cnt: -1
+              });
+            });
+          }).fail(function() {
+            fm.trigger('error', {error : 'UMA resource cannot be created'});
+            fm.notify({
+              type: 'createresource',
+              cnt: -1
+            });
+          });
         });
         refreshRemovableEvtHandlers(elt);
       },
@@ -140,13 +202,13 @@ elFinder.prototype.commands.protectresource = function() {
           "<button class='ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only'><span class='ui-button-text'>Add</span></button>"+
         "</form>";
         var assignedScopes = "";
-        if (data.resource && data.resource.scopes) {
-          assignedScopes = getRemovableScopes(data.resource.scopes);
+        if (data.scopes) {
+          assignedScopes = getRemovableScopes(data.scopes);
         }
 
         var information = "";
-        if (data.resource && data.resource.id) {
-          information = "<div><span>reosurceId : "+data.resource.id+"</span></div>";
+        if (data['_id']) {
+          information = "<div><span>resourceId : "+ data['_id'] +"</span></div>";
         }
 
         tableBody = tableBody.replace('{information}', information);
@@ -154,10 +216,10 @@ elFinder.prototype.commands.protectresource = function() {
         tableBody = tableBody.replace('{assignedScopes}', assignedScopes);
 
         // Display the buttons.
-        if (!data.resource && !data.resource.id) {
-          content = content.replace('{buttons}', "<button class='create-resource ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only'><span class='ui-button-text patch-resource'>Create</span></button>");
+        if (!data['_id']) {
+          content = content.replace('{buttons}', "<button class='ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only'><span class='ui-button-text create-resource'>Create</span></button>");
         } else {
-          content = content.replace('{buttons}', "<button class='update-resource ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only'><span class='ui-button-text patch-resource'>Update</span></button>");
+          content = content.replace('{buttons}', "<button class='ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only'><span class='ui-button-text update-resource'>Update</span></button>");
         }
 
 
@@ -183,22 +245,32 @@ elFinder.prototype.commands.protectresource = function() {
       cnt: 1,
       hideCnt: true
     });
-    reqs.push(fm.request({
-      cmd: 'getresource',
-      target: file.hash
-    }).done(function(data) {
-      displayResourceInformations(data);
+
+    if (file && file['resource_id']) {      
+      $.get(this.fm.options.authUrl).then(function(configuration) {
+        $.ajax({
+          method: 'GET',
+          url: configuration['resource_registration_endpoint'] + '/' + file['resource_id']
+        }).then(function(data) {
+          fm.notify({
+            type: 'protectresource',
+            cnt: -1
+          });
+          displayResourceInformations(data);
+        }).fail(function(e) {
+          fm.trigger('error', {error : 'Uma information cannot be retrieved'});
+          fm.notify({
+            type: 'protectresource',
+            cnt: -1
+          });
+        });
+      });
+    } else {
+      displayResourceInformations({});
       fm.notify({
         type: 'protectresource',
         cnt: -1
       });
-    }).fail(function(e) {
-      console.log(e);
-      fm.trigger('error', {error : 'Information cannot be retrieved'});
-      fm.notify({
-        type: 'protectresource',
-        cnt: -1
-      });
-    }));
+    }
   };
 };

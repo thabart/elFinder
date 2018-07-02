@@ -573,13 +573,40 @@ elFinder.prototype.commands.permissions = function() {
 		}
 
     // display loading spinner
+    if (!file['resource_id']) {
+      fm.trigger('error', {error : 'theResourceMustBeFirstCreated'});
+      return;
+    }
+
     fm.notify({
       type: 'permissions',
       msg: 'Get permissions',
       cnt: 1,
       hideCnt: true
     });
-
+    // authpolicy_ids
+    $.get(fm.options.authUrl).then(function(configuration) {
+      var request = { ids: file['authpolicy_ids'] };
+      $.ajax({
+        method: 'POST',
+        url: configuration['policies_endpoint'] + '/.search',
+        data: JSON.stringify(request),
+        contentType: 'application/json',
+      }).then(function(result) {
+        console.log(result);
+      }).fail(function() {
+        fm.notify({
+          type: 'permissions',
+          cnt: -1
+        });
+      });
+    }).fail(function() {
+      fm.notify({
+        type: 'permissions',
+        cnt: -1
+      });
+    });
+    /*
     reqs.push(fm.request({
       data: { cmd: 'perms', target: file.hash },
       preventDefault: true
@@ -590,11 +617,7 @@ elFinder.prototype.commands.permissions = function() {
         cnt: -1
       });
     }).fail(function() {
-      fm.trigger('error', {error : 'theResourceMustBeFirstCreated'});
-      fm.notify({
-        type: 'permissions',
-        cnt: -1
-      });
     }));
+    */
   }
 }

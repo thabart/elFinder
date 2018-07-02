@@ -153,8 +153,8 @@
 		$(function() {
 			$('#elfinder').elfinder({
 				// Connector URL
-				url : 'http://localhost:5004/elfinder',
-
+				url : 'http://localhost:60006/elfinder',
+				authUrl: 'http://localhost:60004/.well-known/uma2-configuration',
 				// Callback when a file is double-clicked
 				getFileCallback : function(file) {
 					// ...
