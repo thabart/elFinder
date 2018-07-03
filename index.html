@@ -155,14 +155,15 @@
 				// Connector URL
 				url : 'http://localhost:60006/elfinder',
 				authUrl: 'http://localhost:60004/.well-known/uma2-configuration',
+				profileUrl: 'http://localhost:60005',
 				// Callback when a file is double-clicked
 				getFileCallback : function(file) {
 					// ...
 				},
         contextmenu: {
-						cwd    : ['reload', 'back', '|', 'mkdir', 'mkfile', 'paste', 'addclient', 'mkuser', 'mkscope', '|', 'sort', '|', 'info'],
-						navbar : ['open', '|', 'copy', 'cut', 'paste', 'duplicate', '|', 'rm', 'removeclient', 'rmpolicy', 'rmresource',  'rmscope', 'rmuser', '|', 'clientinfo',  'resourceinfo', 'authpolicy', 'scopeinfo', 'accessinfo', 'permissions', 'userinfo', 'umaresource' ],
-            files: ['getfile', '|', 'mkdir', '|', 'copy', 'cut', 'paste', 'duplicate', '|', 'rm', 'removeclient', 'rmpolicy', 'rmscope', 'rmresource', 'rmuser', '|', 'rename', '|', 'clientinfo',  'resourceinfo', 'authpolicy', 'scopeinfo', 'accessinfo', 'info', 'permissions', 'userinfo', 'protectresource' ]
+						cwd    : ['reload', 'back', '|', 'mkdir', 'mkfile', 'paste', '|', 'sort', '|', 'info'],
+						navbar : ['open', '|', 'copy', 'cut', 'paste', 'duplicate', '|', 'rm', '|', 'permissions' ],
+            files: ['getfile', '|', 'mkdir', '|', 'copy', 'cut', 'paste', 'duplicate', '|', 'rm', '|', 'rename', '|', 'info', 'permissions', 'protectresource' ]
         },
 				stores: [ 'openIdStore' ],
         uiOptions: {
@@ -175,21 +176,7 @@
 			      ['view', 'sort'],
             ['protectresource', 'permissions']
           ]
-        },
-				commandsOptions: {
-					clientinfo: {
-						editUrl: 'https://{client_id}'
-					},
-					authpolicy: {
-						editUrl: 'http://{authpolicy_id}'
-					},
-					resourceinfo: {
-						editUrl: 'http://{resource_id}'
-					},
-					userinfo: {
-						editUrl: 'http://localhost:4200/users/{user_id}'
-					}
-				}
+        }
 			});
 		});
 	</script>

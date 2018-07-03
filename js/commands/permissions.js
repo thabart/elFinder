@@ -3,11 +3,12 @@
 elFinder.prototype.commands.permissions = function() {
   var fm = this.fm,
     spclass = 'elfinder-dialog-notify',
-    clientsKey = 'openidclients',
+    clientsKey = 'clients',
     idProvidersKey = 'idproviders',
-    permissionsKey = 'permissions',
-    openIdClaimsKey = 'openidclaims',
-    providerUrlKey = 'provider';
+    permissionsKey = 'scopes',
+    openIdClaimsKey = 'claims',
+    providerUrlKey = 'provider',
+    authIdKey = 'authId';
   this.shortcuts = [{
 		pattern     : 'ctrl+p'
   }];
@@ -87,32 +88,73 @@ elFinder.prototype.commands.permissions = function() {
               }
             });
 
+            var request = {
+              rules: rules
+            };
+
             fm.notify({
               type: 'addpermissions',
               msg: 'Update the permissions',
               cnt: 1,
               hideCnt: true
             });
-            reqs.push(fm.request({
-              data: {
-                cmd: 'mkperm',
-                target: file.hash,
-                rules: rules
-              },
-              preventDefault: true
-            }).done(function(data) {
-              fm.notify({
-                type: 'addpermissions',
-                cnt: -1
+            if (information[authIdKey]) { // Update the authorization policy.        
+              request['id'] = information[authIdKey];
+              $.get(fm.options.authUrl).then(function(configuration) {
+                $.ajax({
+                  method: 'PUT',
+                  url: configuration['policies_endpoint'],
+                  data: JSON.stringify(request),
+                  contentType: 'application/json',
+                }).then(function() {
+                  fm.notify({
+                    type: 'addpermissions',
+                    cnt: -1
+                  });
+                  dfrd.resolve();
+                }).fail(function() {            
+                  fm.trigger('error', {error : 'the permissions cannot be saved'});
+                  fm.notify({
+                    type: 'addpermissions',
+                    cnt: -1
+                  });
+                });
+              }).fail(function() {                
+                fm.trigger('error', {error : 'the permissions cannot be saved'});
+                fm.notify({
+                  type: 'addpermissions',
+                  cnt: -1
+                });
               });
-              dfrd.resolve(data);
-            }).fail(function() {
-              fm.trigger('error', {error : 'the permission cannot be saved'});
-              fm.notify({
-                type: 'addpermissions',
-                cnt: -1
+            } else { // Add an authorization policy.
+              request['resource_set_ids'] = [ file['resource_id'] ];              
+              $.get(fm.options.authUrl).then(function(configuration) {
+                $.ajax({
+                  method: 'POST',
+                  url: configuration['policies_endpoint'],
+                  data: JSON.stringify(request),
+                  contentType: 'application/json',
+                }).then(function() {
+                  fm.notify({
+                    type: 'addpermissions',
+                    cnt: -1
+                  });
+                  dfrd.resolve();
+                }).fail(function() {            
+                  fm.trigger('error', {error : 'the permissions cannot be saved'});
+                  fm.notify({
+                    type: 'addpermissions',
+                    cnt: -1
+                  });
+                });
+              }).fail(function() {                
+                fm.trigger('error', {error : 'the permissions cannot be saved'});
+                fm.notify({
+                  type: 'addpermissions',
+                  cnt: -1
+                });
               });
-            }));
+            }
           });
         }
 			},
@@ -572,52 +614,64 @@ elFinder.prototype.commands.permissions = function() {
 			return $.Deferred().resolve();
 		}
 
-    // display loading spinner
     if (!file['resource_id']) {
       fm.trigger('error', {error : 'theResourceMustBeFirstCreated'});
       return;
     }
-
     fm.notify({
       type: 'permissions',
       msg: 'Get permissions',
       cnt: 1,
       hideCnt: true
     });
-    // authpolicy_ids
+
     $.get(fm.options.authUrl).then(function(configuration) {
-      var request = { ids: file['authpolicy_ids'] };
-      $.ajax({
-        method: 'POST',
-        url: configuration['policies_endpoint'] + '/.search',
-        data: JSON.stringify(request),
-        contentType: 'application/json',
-      }).then(function(result) {
-        console.log(result);
+      var getResource = function() {
+        return $.ajax({
+          method: 'GET',
+          url: configuration['resource_registration_endpoint'] + '/' + file['resource_id']
+        });
+      };
+      var getAuthPolicies = function() {
+        var policyId = file['policy_ids'][0];
+        var request = { resource_ids : [ file['resource_id'] ], count: 1 };
+        return $.ajax({
+          method: 'POST',
+          url: configuration['policies_endpoint'] + '/.search',
+          data: JSON.stringify(request),
+          contentType: 'application/json',
+        });
+      };
+      var getEndpoints = function() {
+        return $.get(fm.options.profileUrl + '/endpoints');
+      };
+      $.when(getResource(), getAuthPolicies(), getEndpoints()).done(function(resource, authPolicies, endpoints) {
+        // NOTE : Manage only the first authorization policy.
+        resource = resource[0];
+        authPolicies = authPolicies[0];
+        console.log(authPolicies);
+        endpoints = endpoints[0];
+        var res = {
+          authrules: []
+        };
+        res[permissionsKey] = resource.scopes;
+        res[idProvidersKey] = endpoints.filter(function(e) { return e.type === 1 ;});
+        if (authPolicies.content && authPolicies.content.length > 0 && authPolicies.content[0].rules) {
+          res['authrules'] = authPolicies.content[0].rules;
+          res[authIdKey] = authPolicies.content[0].id;
+        }
+
+        displayView(res);
+        fm.notify({
+          type: 'permissions',
+          cnt: -1
+        });
       }).fail(function() {
         fm.notify({
           type: 'permissions',
           cnt: -1
         });
       });
-    }).fail(function() {
-      fm.notify({
-        type: 'permissions',
-        cnt: -1
-      });
     });
-    /*
-    reqs.push(fm.request({
-      data: { cmd: 'perms', target: file.hash },
-      preventDefault: true
-    }).done(function(data) {
-      displayView(data);
-      fm.notify({
-        type: 'permissions',
-        cnt: -1
-      });
-    }).fail(function() {
-    }));
-    */
   }
 }

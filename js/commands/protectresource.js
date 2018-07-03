@@ -83,7 +83,7 @@ elFinder.prototype.commands.protectresource = function() {
               url: configuration['resource_registration_endpoint'],
               contentType: 'application/json',
               data: JSON.stringify(request)
-            }).then(function() {     
+            }).then(function(r) {  
               dfrd.resolve();
               fm.notify({
                 type: 'updateresource',
@@ -123,7 +123,7 @@ elFinder.prototype.commands.protectresource = function() {
               url: configuration['resource_registration_endpoint'],
               contentType: 'application/json',
               data: JSON.stringify(request)
-            }).then(function(authResult) {              
+            }).then(function(authResult) { 
               reqs.push(fm.request({
                 data: {
                   cmd: 'umaResource',

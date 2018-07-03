@@ -136,9 +136,7 @@ elFinder.prototype._options = {
 		'open', 'opendir', 'reload', 'home', 'up', 'back', 'forward', 'getfile', 'quicklook',
 		'download', 'rm', 'duplicate', 'rename', 'mkdir', 'mkfile', 'copy',
 		'cut', 'paste', 'search', 'info', 'view', 'help',
-		'resize', 'sort', 'places', 'chmod', 'permissions',
-		'clientinfo', 'authpolicy', 'addclient', 'removeclient', 'rmresource', 'resourceinfo', 'rmpolicy',
-		'rmscope', 'scopeinfo', 'accessinfo', 'rmuser', 'userinfo', 'mkuser', 'mkscope', 'protectresource'
+		'resize', 'sort', 'places', 'chmod', 'permissions', 'protectresource'
 	],
 
 	/**
@@ -165,18 +163,6 @@ elFinder.prototype._options = {
 		// 		return [ { pattern: 'ctrl+e ctrl+down numpad_enter' + (fm.OS != 'mac' && ' enter') } ];
 		// 	}
 		// },
-		clientinfo: {
-			editUrl: 'http://localhost/clients/{client_id}'
-		},
-		userinfo: {
-			editUrl: 'http://localhost/userinfo/{user_id}'
-		},
-		resourceinfo: {
-			resourceUrl: '/#{hash}'
-		},
-    authpolicy: {
-    	resourceUrl: '/#{hash}'
-    },
 		// "getfile" command options.
 		getfile : {
 			onlyURL  : false,

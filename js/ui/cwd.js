@@ -225,7 +225,7 @@ $.fn.elfindercwd = function(fm, options) {
 					return f.perm? fm.formatFileMode(f.perm, 'both') : '';
 				},
 				marker : function(f) {
-					return (f.alias || f.mime == 'symlink-broken' ? symlinkTpl : '')+(!f.read || !f.write || f.has_security ? permsTpl : '')+(f.locked ? lockTpl : '');
+					return (f.alias || f.mime == 'symlink-broken' ? symlinkTpl : '')+(!f.read || !f.write || f.resource_id ? permsTpl : '')+(f.locked ? lockTpl : '');
 				},
 				tooltip : function(f) {
 					var title = fm.formatDate(f) + (f.size > 0 ? ' ('+fm.formatSize(f.size)+')' : ''),
